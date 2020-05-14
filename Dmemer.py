@@ -20,7 +20,7 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 
 DATABASE_URL = os.environ['DATABASE_URL']
-con = pg8000.connect(DATABASE_URL, ssl=True)
+con = pg8000.connect(DATABASE_URL, ssl_context=True)
 
 @bot.command()
 async def initalize(ctx):
