@@ -26,7 +26,7 @@ cur = conn.cursor()
 @bot.command()
 async def init(ctx):
 	  cur.execute("DROP TABLE IF EXISTS data")
-	  cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
+	  cur.execute("CREATE TABLE data (id INTEGER, amount INTEGER)")
 	  for guild in bot.guilds:
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
@@ -37,7 +37,7 @@ async def init(ctx):
 async def rich(ctx):
 	for guild in bot.guilds:
 	  for member in guild.members:
-	      cur.execute(f"SELECT * FROM data WHERE id = {str(member.id)}")
+	      cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
 	      record = cur.fetchall()
 	      for row in record:
 	      	print("ID: ", row[0])
