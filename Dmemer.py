@@ -41,7 +41,7 @@ async def rich(ctx):
 	      record = cur.fetchall()
 	      for row in record:
 	      	print("ID: ", row[0])
-	      	print("Amount: " row[1])
+	      	print("Amount: ", row[1])
 
 token = os.environ.get('BOT_TOKEN')
 bot.run(token)
