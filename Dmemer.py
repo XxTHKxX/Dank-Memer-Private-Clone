@@ -40,8 +40,8 @@ async def rich(ctx):
 	      cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
 	      record = cur.fetchall()
 	      for row in record:
-	      	print("ID: ", row[0])
-	      	print("Amount: ", row[1])
+	      	await ctx.send("ID: ", row[0])
+	      	await ctx.send("Amount: ", row[1])
 
 token = os.environ.get('BOT_TOKEN')
 bot.run(token)
