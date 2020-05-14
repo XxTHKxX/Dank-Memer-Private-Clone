@@ -4,7 +4,7 @@ import os
 from itertools import cycle
 from discord.ext import commands, tasks
  
-bot = commands.Bot(command_prefix='n! ')
+bot = commands.Bot(command_prefix='n!')
 #Status Change
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
 @tasks.loop(seconds=2)
