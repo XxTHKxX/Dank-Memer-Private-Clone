@@ -30,14 +30,14 @@ async def init(ctx):
 	  for guild in bot.guilds:
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
-	      	await ctx.send(f"Member {member.name}{member.discriminator} has been added to the database")
+	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
 	  conn.commit()
 	  
 @bot.command()
 async def rich(ctx):
 	for guild in bot.guilds:
 	  for member in guild.members:
-	      cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
+	      cur.execute(f"SELECT * FROM data WHERE id = {str(member.id)}")
 	      record = cur.fetchall()
 	      for row in record:
 	      	print("ID: ", row[0])
