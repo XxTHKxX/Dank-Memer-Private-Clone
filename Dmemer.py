@@ -25,8 +25,8 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 @bot.command()
 async def initalize(ctx):
-	  await cur.execute("DROP TABLE IF EXISTS data")
-	  await cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
+	  cur.execute("DROP TABLE IF EXISTS data")
+	  cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
 	  for guild in bot.guilds:
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
