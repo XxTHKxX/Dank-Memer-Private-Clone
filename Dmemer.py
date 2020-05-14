@@ -24,7 +24,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 @bot.command()
-async def initalize(ctx):
+async def init(ctx):
 	  cur.execute("DROP TABLE IF EXISTS data")
 	  cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
 	  for guild in bot.guilds:
@@ -32,6 +32,16 @@ async def initalize(ctx):
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
 	      	await ctx.send(f"Member {member.name}{member.discriminator} has been added to the database")
 	  conn.commit()
+	  
+@bot.command()
+async def rich(ctx):
+	for guild in bot.guilds:
+	  for member in guild.members:
+	      cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
+	      record = cur.fetchall()
+	      for row in record:
+	      	print("ID: ", row[0])
+	      	print("Amount: " row[1])
 
 token = os.environ.get('BOT_TOKEN')
 bot.run(token)
