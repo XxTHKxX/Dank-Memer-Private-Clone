@@ -1,9 +1,10 @@
 import discord
+import pg8000
 import os
 from itertools import cycle
 from discord.ext import commands, tasks
  
-bot = commands.Bot(command_prefix='TDM ')
+bot = commands.Bot(command_prefix=' ')
 #Status Change
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
 @tasks.loop(seconds=2)
@@ -13,60 +14,22 @@ async def change_status():
 async def on_ready():
     change_status.start()
     print('Ready.')
- 
 
 @bot.command()
-async def pingx(ctx):
+async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
- 
+
+DATABASE_URL = os.environ['DATABASE_URL']
+con = pg8000.connect(DATABASE_URL)
 
 @bot.command()
-@commands.has_permissions(manage_guild=True)
-async def load(ctx, extension):
-    bot.load_extension(f'cogs.{extension}')
-    await ctx.send(f'{extension} has been loaded')
-    print(f'{extension} has been loaded')
+async def initalize(ctx):
+	  await con.run("DROP TABLE IF EXISTS data")
+	  await con.run("CREATE TABLE data (id TEXT, amount INTEGER)")
+	  for guild in bot.guilds:
+	      for member in guild.members:
+	      	con.run(f"INSERT INTO data VALUES ({member.id}), (15000) ")
+	      	await ctx.send(f"Member {member.name}{member.discriminator} has been added to the database")
 
-@bot.command()
-@commands.has_permissions(manage_guild=True)
-async def unload(ctx, extension):
-    bot.unload_extension(f'cogs.{extension}')
-    await ctx.send(f'{extension} has been unloaded')
-    print(f'{extension} has been unloaded')
-
-@bot.command()
-@commands.has_permissions(manage_guild=True)
-async def reload(ctx, extension):
-    bot.unload_extension(f'cogs.{extension}')
-    bot.load_extension(f'cogs.{extension}')
-    print(f'{extension} has been reloaded')
-    await ctx.send(f'{extension} has been reloaded')
-
-
-@load.error
-async def load_command_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(">>> Error! Missing required argument! Please specify the module to load")
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(">>> Error! Missing Permission! You don't have the **Manage Server** permission to run this command")
-
-@unload.error
-async def unload_command_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(">>> Error! Missing required argument! Please specify the module to unload")
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(">>> Error! Missing Permission! You don't have the **Manage Server** permission to run this command")   
-
-@reload.error
-async def reload_command_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(">>> Error! Missing required argument! Please specify the module to reload")
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(">>> Error! Missing Permission! You don't have the **Manage Server** permission to run this command")
-
-for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs.{filename[:-3]}')
-
-token = ''
+token = os.environ.get('BOT_TOKEN')
 bot.run(token)
