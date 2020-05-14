@@ -31,17 +31,21 @@ async def init(ctx):
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
 	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
+	      	time.sleep(1)
 	  conn.commit()
 	  
 @bot.command()
-async def rich(ctx):
+async def list(ctx):
 	for guild in bot.guilds:
-	  for member in guild.members:
-	      cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
-	      record = cur.fetchall()
-	      for row in record:
-	      	await ctx.send("ID: ", row[0])
-	      	await ctx.send("Amount: ", row[1])
+		for member in guild.members:
+			cur.execute(f"SELECT * FROM data WHERE id = {member.id})
+			record = cur.fetchall()
+			for row in record:
+				await ctx.send("ID: ", row[0])
+				await ctx.send(f"Name: {member.name}#{member.discriminator}")
+				await ctx.send("Balance: ", row[1])
+			
+	
 
 token = os.environ.get('BOT_TOKEN')
 bot.run(token)
