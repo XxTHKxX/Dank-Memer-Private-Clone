@@ -26,7 +26,7 @@ cur = conn.cursor()
 @bot.command()
 async def init(ctx):
 	  cur.execute("DROP TABLE IF EXISTS data")
-	  cur.execute("CREATE TABLE data (id INTEGER, amount INTEGER)")
+	  cur.execute("CREATE TABLE data (id REAL, amount INTEGER)")
 	  for guild in bot.guilds:
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
