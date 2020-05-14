@@ -31,6 +31,7 @@ async def initalize(ctx):
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data VALUES ({member.id}), (15000) ")
 	      	await ctx.send(f"Member {member.name}{member.discriminator} has been added to the database")
+	  conn.commit()
 
 token = os.environ.get('BOT_TOKEN')
 bot.run(token)
