@@ -4,7 +4,7 @@ import os
 from itertools import cycle
 from discord.ext import commands, tasks
  
-bot = commands.Bot(command_prefix=' ')
+bot = commands.Bot(command_prefix='n! ')
 #Status Change
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
 @tasks.loop(seconds=2)
@@ -20,7 +20,7 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 
 DATABASE_URL = os.environ['DATABASE_URL']
-con = pg8000.connect(DATABASE_URL, sslmode='require')
+con = pg8000.connect(DATABASE_URL, ssl=True)
 
 @bot.command()
 async def initalize(ctx):
