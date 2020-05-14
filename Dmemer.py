@@ -20,7 +20,10 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 
 DATABASE_URL = os.environ['DATABASE_URL']
-con = pg8000.connect(DATABASE_URL, ssl_context=True)
+"""
+URL IS postgres://vhmsoqilfojjga:3c8050ea8af0ab15e5fff18a9a18fce9e120b8db63a994a07f7dbe4d3a3f4804@ec2-52-202-146-43.compute-1.amazonaws.com:5432/demml3ogknu62f
+"""
+con = pg8000.connect(user='vhmsoqilfojjga', host='ec2-52-202-146-43.compute-1.amazonaws.com', database = 'demml3ogknu62f', ssl_context=True)
 
 @bot.command()
 async def initalize(ctx):
