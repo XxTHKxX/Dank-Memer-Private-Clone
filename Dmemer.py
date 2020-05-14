@@ -1,6 +1,7 @@
 import discord
 import psycopg2
 import os
+import time
 from itertools import cycle
 from discord.ext import commands, tasks
  
