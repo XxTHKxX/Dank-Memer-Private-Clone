@@ -40,8 +40,10 @@ async def list(ctx):
 	for guild in bot.guilds:
 		for member in guild.members:
 			cur.execute(f"SELECT * FROM data")
-			record = cur.fetchall()
-			for row in record:
+			while True:
+				row = cur.fetchone()
+				if row == None:
+					break
 				await ctx.send(f"ID: {row[0]}")
 				await ctx.send(f"Name: {member.name}#{member.discriminator}")
 				await ctx.send(f"Balance: {row[1]}")
