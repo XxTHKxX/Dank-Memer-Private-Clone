@@ -26,10 +26,11 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 @bot.command()
 async def init(ctx):
-    cur.execute("CREATE TABLE data (id INTEGER, amount INTEGER)")
+    cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
     for guild in bot.guilds:
 	      for member in guild.members:
-	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 15000) ")
+	      	memid = str(member.id)
+	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({memid}, 15000) ")
 	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
 	      	time.sleep(1)
     conn.commit()
