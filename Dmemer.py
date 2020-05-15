@@ -26,8 +26,6 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 @bot.command()
 async def init(ctx):
-	  cur.execute("DROP TABLE IF EXISTS data")
-	  cur.execute("CREATE TABLE data (id INTEGER, amount INTEGER)")
 	  for guild in bot.guilds:
 	      for member in guild.members:
 	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 15000) ")
@@ -37,7 +35,8 @@ async def init(ctx):
 
 @bot.command()
 async def wipe(ctx):
-	cur.execute("DROP TABLE data")
+	cur.execute("DELETE FROM data")
+	cur.execute("DROP TABLE IF EXISTS data")
 	await ctx.send("Table Wiped")
 	
 @bot.command()
