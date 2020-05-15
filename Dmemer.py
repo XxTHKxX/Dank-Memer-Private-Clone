@@ -39,7 +39,7 @@ async def init(ctx):
 async def list(ctx):
 	for guild in bot.guilds:
 		for member in guild.members:
-			cur.execute(f"SELECT * FROM data WHERE id = {member.id}")
+			cur.execute(f"SELECT * FROM data")
 			record = cur.fetchall()
 			for row in record:
 				await ctx.send("ID: ", row[0])
