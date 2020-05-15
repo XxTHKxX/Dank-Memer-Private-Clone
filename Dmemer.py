@@ -42,9 +42,9 @@ async def list(ctx):
 			cur.execute(f"SELECT * FROM data")
 			record = cur.fetchall()
 			for row in record:
-				await ctx.send("ID: ", row[0])
+				await ctx.send(f"ID: {row[0]}")
 				await ctx.send(f"Name: {member.name}#{member.discriminator}")
-				await ctx.send("Balance: ", row[1])
+				await ctx.send(f"Balance: {row[1]}")
 			
 	
 
