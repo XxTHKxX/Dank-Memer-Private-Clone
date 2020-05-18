@@ -51,9 +51,7 @@ async def list(ctx):
 				row = cur.fetchone()
 				if row == None:
 					break
-				await ctx.send(f"ID: {row[0]}")
-				await ctx.send(f"Name: {member.name}#{member.discriminator}")
-				await ctx.send(f"Balance: {row[1]}")
+				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}")
 			
 	
 
