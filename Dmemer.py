@@ -26,11 +26,10 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cur = conn.cursor()
 @bot.command()
 async def init(ctx):
-    cur.execute("CREATE TABLE data (id TEXT, amount INTEGER)")
+    cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)")
     for guild in bot.guilds:
 	      for member in guild.members:
-	      	memid = str(member.id)
-	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({memid}, 5000) ")
+	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ")
 	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
 	      	time.sleep(1)
     conn.commit()
@@ -46,7 +45,7 @@ async def wipe(ctx):
 async def list(ctx):
 	for guild in bot.guilds:
 		for member in guild.members:
-			targetid = str(member.id)
+			targetid = member.id
 			cur.execute(f"SELECT * FROM data WHERE id = {targetid}")
 			while True:
 				row = cur.fetchone()
