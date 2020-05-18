@@ -30,7 +30,7 @@ async def init(ctx):
     for guild in bot.guilds:
 	      for member in guild.members:
 	      	memid = str(member.id)
-	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({memid}, 15000) ")
+	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({memid}, 5000) ")
 	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
 	      	time.sleep(1)
     conn.commit()
@@ -46,7 +46,8 @@ async def wipe(ctx):
 async def list(ctx):
 	for guild in bot.guilds:
 		for member in guild.members:
-			cur.execute(f"SELECT * FROM data")
+			targetid = str(member.id)
+			cur.execute(f"SELECT * FROM data WHERE id = {targetid}")
 			while True:
 				row = cur.fetchone()
 				if row == None:
