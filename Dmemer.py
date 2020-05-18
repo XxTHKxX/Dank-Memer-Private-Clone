@@ -29,9 +29,13 @@ async def init(ctx):
     cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)")
     for guild in bot.guilds:
 	      for member in guild.members:
-	      	cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ")
-	      	await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
-	      	time.sleep(1)
+	      	if member.bot == True:
+	      		pass
+	      	else:
+	          cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ")
+	          await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
+	          time.sleep(1)
+	      	
     conn.commit()
 
 @bot.command()
