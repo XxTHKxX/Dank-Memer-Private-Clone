@@ -57,41 +57,40 @@ async def list(ctx):
 				if row == None:
 					break
 				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}")
+				
 @bot.command()
-async def rob(ctx, message):
-	target = message.mentions
+async def rob(ctx, target : discord.Member):
 	attackerid = ctx.author.id
-	for user in target:
-		cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
-		row = cur.fetchone()
-		if row == None:
-			await ctx.send("Unable to find target")
-		targetbal = row[1]
-		cur.execute(f"SELECT * FROM data WHERE id = {attackerid}")
-		row = cur.fetchone()
-		if row == None:
-			await ctx.send("Unable to find your profile, are you sure you're enrolled?")
-		attackerbal = row[1]
-		
-		successmin = 40
-		roll1 = random.randint(1,100)
-		if roll1 >= successmin:
-			stolenpercent = random.randint(3, 35)
-			stolen = targetbal * (stolenpercent / 100)
-			remain = targetbal - stolen
-			attackernewbal = attackerbal + stolen
-			cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
-			cur.execute(f"UPDATE data SET amount = {attackernewbal} WHERE id = {attackerid}")
-			await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {message}")
+	user = target.id
+	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
+	row = cur.fetchone()
+	if row == None:
+		await ctx.send("Unable to find target")
+	targetbal = row[1]
+	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}")
+	row = cur.fetchone()
+	if row == None:
+		await ctx.send("Unable to find your profile, are you sure you're enrolled?")
+	attackerbal = row[1]	
+	successmin = 40
+	roll1 = random.randint(1,100)
+	if roll1 >= successmin:
+		stolenpercent = random.randint(3, 35)
+		stolen = targetbal * (stolenpercent / 100)
+		remain = targetbal - stolen
+		attackernewbal = attackerbal + stolen
+		cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
+		cur.execute(f"UPDATE data SET amount = {attackernewbal} WHERE id = {attackerid}")
+		await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {message}")
+	else:
+		roll2 = random.randint(1,100)
+		death = 5
+		if roll2 <= death:
+			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
+			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	
 		else:
-			roll2 = random.randint(1,100)
-			death = 5
-			if roll2 <= death:
-				cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
-				await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	
-			else:
-				ctx.send("You Failed the rob, noooob")
-		conn.commit()
+			ctx.send("You Failed the rob, noooob")	
+	conn.commit()
 	
 
 token = os.environ.get('BOT_TOKEN')
