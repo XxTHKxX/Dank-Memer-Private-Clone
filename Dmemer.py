@@ -61,7 +61,7 @@ async def list(ctx):
 @bot.command()
 async def rob(ctx, target : discord.Member):
 	attackerid = ctx.author.id
-	user = target.id
+	user = target
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
 	row = cur.fetchone()
 	if row == None:
