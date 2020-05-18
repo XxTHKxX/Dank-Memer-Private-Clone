@@ -35,7 +35,7 @@ async def init(ctx):
 	      	else:
 	          cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ")
 	          await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
-	          time.sleep(1)
+	          time.sleep(0.5)
 	      	
     conn.commit()
 
@@ -57,6 +57,7 @@ async def list(ctx):
 				if row == None:
 					break
 				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}")
+				time.sleep(0.5)
 				
 @bot.command()
 async def rob(ctx, target : discord.Member):
