@@ -89,7 +89,7 @@ async def rob(ctx, target : discord.Member):
 			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
 			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	
 		else:
-			ctx.send("You Failed the rob, noooob")	
+			await ctx.send("You Failed the rob, noooob")	
 	conn.commit()
 	
 
