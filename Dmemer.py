@@ -81,7 +81,7 @@ async def rob(ctx, target : discord.Member):
 		attackernewbal = attackerbal + stolen
 		cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
 		cur.execute(f"UPDATE data SET amount = {attackernewbal} WHERE id = {attackerid}")
-		await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {message}")
+		await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {user}")
 	else:
 		roll2 = random.randint(1,100)
 		death = 5
