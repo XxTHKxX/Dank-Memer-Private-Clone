@@ -22,11 +22,16 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 
 DATABASE_URL = os.environ['DATABASE_URL']
+def connectsql():	
+  global conn
+  conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+  global cur
+  cur = conn.cursor()
 
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-cur = conn.cursor()
+
 @bot.command()
 async def init(ctx):
+    connectsql()
     cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)")
     for guild in bot.guilds:
 	      for member in guild.members:
@@ -38,16 +43,20 @@ async def init(ctx):
 	          time.sleep(0.5)
 	      	
     conn.commit()
+    conn.close()
 
 @bot.command()
 async def wipe(ctx):
+	connectsql()
 	cur.execute("DELETE FROM data")
 	cur.execute("DROP TABLE IF EXISTS data")
 	conn.commit()
+	conn.close()
 	await ctx.send("Table Wiped")
 	
 @bot.command()
 async def list(ctx):
+	connectsql()
 	for guild in bot.guilds:
 		for member in guild.members:
 			targetid = member.id
@@ -58,9 +67,11 @@ async def list(ctx):
 					break
 				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}")
 				time.sleep(0.5)
+	conn.close()
 				
 @bot.command()
 async def rob(ctx, target : discord.Member):
+	connectsql()
 	attackerid = ctx.author.id
 	user = target
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
@@ -92,6 +103,7 @@ async def rob(ctx, target : discord.Member):
 		else:
 			await ctx.send("You Failed the rob, noooob")	
 	conn.commit()
+	conn.close()
 	
 
 token = os.environ.get('BOT_TOKEN')
