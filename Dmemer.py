@@ -88,7 +88,7 @@ async def rob(ctx, target : discord.Member):
 	roll1 = random.randint(1,100)
 	if roll1 >= successmin:
 		stolenpercent = random.randint(3, 35)
-		stolen = targetbal * (stolenpercent / 100)
+		stolen = round(targetbal * (stolenpercent / 100))
 		remain = targetbal - stolen
 		attackernewbal = attackerbal + stolen
 		cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
