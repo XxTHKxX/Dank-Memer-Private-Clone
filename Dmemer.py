@@ -5,6 +5,7 @@ import time
 import random
 from itertools import cycle
 from discord.ext import commands, tasks
+# Importing libraries
  
 bot = commands.Bot(command_prefix='n!')
 #Status Change
@@ -12,14 +13,17 @@ status = cycle(['Looking at the records', 'transferring money', 'Waiting for dra
 @tasks.loop(seconds=2)
 async def change_status():
     await bot.change_presence(activity=discord.Game(next(status)))
+    
 @bot.event
 async def on_ready():
     change_status.start()
     print('Ready.')
+# When bot is ready it'll start the status change routine and print the Ready message in the log
 
 @bot.command()
 async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
+#No need to explain this one -.-
 
 DATABASE_URL = os.environ['DATABASE_URL']
 def connectsql():	
@@ -27,84 +31,87 @@ def connectsql():
   conn = psycopg2.connect(DATABASE_URL, sslmode='require')
   global cur
   cur = conn.cursor()
-
+# Acquiring database's URL, connecting and making a cursor to access the database
 
 @bot.command()
 async def init(ctx):
-    connectsql()
-    cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)")
-    for guild in bot.guilds:
-	      for member in guild.members:
+    connectsql() #Connect to the database
+    cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)") #Start the database creation process
+    for guild in bot.guilds: #Looping though all servers
+	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
-	      		pass
+	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
-	          cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ")
-	          await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database")
-	          time.sleep(0.75)
+	          cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ") #Adding member to database
+	          await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database") #Reporting to the user on who get added
+	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
-    conn.commit()
-    conn.close()
+    conn.commit() #Commiting the changes to the database
+    conn.close() #Closing the database connection
 
 @bot.command()
 async def wipe(ctx):
-	connectsql()
-	cur.execute("DELETE FROM data")
-	cur.execute("DROP TABLE IF EXISTS data")
-	conn.commit()
-	conn.close()
-	await ctx.send("Table Wiped")
+	connectsql() # Connect to database
+	cur.execute("DELETE FROM data") # Wipe all data from the table
+	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
+	conn.commit() #Commit the change
+	conn.close() #Close the connection
+	await ctx.send("Table Wiped") #Report to user
 	
 @bot.command()
 async def list(ctx):
-	connectsql()
-	for guild in bot.guilds:
-		for member in guild.members:
-			targetid = member.id
-			cur.execute(f"SELECT * FROM data WHERE id = {targetid}")
+	connectsql() #Connect to database
+	for guild in bot.guilds: #looping though all servers
+		for member in guild.members: #looping though all members
+			targetid = member.id #Getting the ID of a member
+			cur.execute(f"SELECT * FROM data WHERE id = {targetid}") #Search in the database about the user with that ID
 			while True:
-				row = cur.fetchone()
+				row = cur.fetchone() #Get the data on that user
 				if row == None:
-					break
-				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}")
-				time.sleep(0.75)
-	conn.close()
+					break #If the data is not found, skip
+				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}") #Reporting data
+				time.sleep(0.75) #Wait 0.75 seconds
+	conn.close() #Close connection
 				
 @bot.command()
 async def rob(ctx, target : discord.Member):
-	connectsql()
-	attackerid = ctx.author.id
-	user = target
+	connectsql() #Connect to database
+	attackerid = ctx.author.id #Get the ID of the attacker
+	user = target #Get ID of the victim
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
-	row = cur.fetchone()
+	row = cur.fetchone() #Get data of the victim
 	if row == None:
-		await ctx.send("Unable to find target")
-	targetbal = row[1]
-	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}")
-	row = cur.fetchone()
+		await ctx.send("Unable to find target") #Report if the user is not found
+	targetbal = row[1] #Saving the balance data of the victim
+	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}") #Getting the data of the attacker
+	row = cur.fetchone() #Get data of attacker
 	if row == None:
-		await ctx.send("Unable to find your profile, are you sure you're enrolled?")
-	attackerbal = row[1]	
-	successmin = 40
-	roll1 = random.randint(1,100)
-	if roll1 >= successmin:
-		stolenpercent = random.randint(3, 35)
-		stolen = round(targetbal * (stolenpercent / 100))
+		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
+	attackerbal = row[1]	#Saving data of attacker
+	successmin = 40 #Minimum success number
+	roll1 = random.randint(1,100) # Generate first number
+	if roll1 >= successmin: #Check if the attacker succeed
+		stolenpercent = random.randint(3, 35) #Randomizing the percentage stolen
+		stolen = round(targetbal * (stolenpercent / 100)) #Calculating the amount stolen and rounding it
 		remain = targetbal - stolen
 		attackernewbal = attackerbal + stolen
+		# Math Time
 		cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
 		cur.execute(f"UPDATE data SET amount = {attackernewbal} WHERE id = {attackerid}")
-		await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {user}")
+		#Updating the datas in the database
+		await ctx.send(f"Successful Steal! You've swooped {stolen}, or {stolenpercent}% from {user}")
+		#report to user
 	else:
-		roll2 = random.randint(1,100)
+		roll2 = random.randint(1,100) #Randomizing number 2
 		death = 10
-		if roll2 <= death:
-			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
-			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	
+		if roll2 <= death: #Check if that user is really gonna die
+			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}") #Delete their money
+			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	#INSULT
 		else:
-			await ctx.send("You Failed the rob, noooob")	
-	conn.commit()
-	conn.close()
+			await ctx.send("You Failed the rob, noooob")	 #Report if they failed
+	conn.commit() #Commit data to database
+	conn.close() #Close connection
 	
 
 token = os.environ.get('BOT_TOKEN')
-bot.run(token)
+bot.run(token) #Getting the bot token and logging in with it
