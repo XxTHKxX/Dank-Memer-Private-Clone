@@ -25,8 +25,8 @@ async def ping(ctx):
     await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 #No need to explain this one -.-
 
-DATABASE_URL = os.environ['DATABASE_URL']
 def connectsql():	
+	DATABASE_URL = os.environ['DATABASE_URL']
   global conn
   conn = psycopg2.connect(DATABASE_URL, sslmode='require')
   global cur
