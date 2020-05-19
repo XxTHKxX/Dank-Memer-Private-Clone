@@ -84,7 +84,7 @@ async def rob(ctx, target : discord.Member):
 	if row == None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?")
 	attackerbal = row[1]	
-	successmin = 40
+	successmin = 101
 	roll1 = random.randint(1,100)
 	if roll1 >= successmin:
 		stolenpercent = random.randint(3, 35)
@@ -96,7 +96,7 @@ async def rob(ctx, target : discord.Member):
 		await ctx.send(f"Sucessful Steal! You've swooped {stolen}, or {stolenpercent}% from {user}")
 	else:
 		roll2 = random.randint(1,100)
-		death = 5
+		death = 101
 		if roll2 <= death:
 			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
 			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	
