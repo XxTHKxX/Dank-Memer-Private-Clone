@@ -36,14 +36,14 @@ def connectsql():
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, name TEXT, amount INTEGER)") #Start the database creation process
+    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
     for guild in bot.guilds: #Looping though all servers
 	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
-	          targetname = member.name + member.discriminator
-	          cur.execute(f"INSERT INTO data (id, name, amount) VALUES ({member.id}, {targetname}, 5000) ") #Adding member to database
+	          targetname = member.name + "#" + member.discriminator
+	          cur.execute(f"INSERT INTO data VALUES ({member.id}, {targetname}, 5000) ") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
