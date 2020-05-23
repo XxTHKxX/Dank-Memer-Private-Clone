@@ -43,7 +43,7 @@ async def init(ctx):
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
 	          targetname = member.name + "#" + member.discriminator
-	          cur.execute(f"INSERT INTO data VALUES ({member.id}, {targetname}, 5000) ") #Adding member to database
+	          cur.execute(f"INSERT INTO data (id, username. amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
