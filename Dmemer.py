@@ -26,7 +26,7 @@ async def ping(ctx):
 #No need to explain this one -.-
 
 def connectsql():	
-	DATABASE_URL = os.environ['DATABASE_URL']
+  DATABASE_URL = os.environ['DATABASE_URL']
   global conn
   conn = psycopg2.connect(DATABASE_URL, sslmode='require')
   global cur
@@ -42,7 +42,7 @@ async def init(ctx):
 	      	if member.bot == True:
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
-	      		targetname = member.name + member.discriminator
+	          targetname = member.name + member.discriminator
 	          cur.execute(f"INSERT INTO data (id, name, amount) VALUES ({member.id}, {targetname}, 5000) ") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
@@ -64,7 +64,6 @@ async def rich(ctx):
 	connectsql() #Connect to database
 	for guild in bot.guilds: #looping though all servers
 		for member in guild.members: #looping though all members
-			targetid = member.id #Getting the ID of a member
 			cur.execute(f"SELECT * FROM data ORDER BY amount") #Search in the database about the user with that ID
 			while True:
 				row = cur.fetchone() #Get the data on that user
