@@ -36,14 +36,15 @@ def connectsql():
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, amount INTEGER)") #Start the database creation process
+    cur.execute("CREATE TABLE data (id BIGINT, name TEXT, amount INTEGER)") #Start the database creation process
     for guild in bot.guilds: #Looping though all servers
 	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
-	          cur.execute(f"INSERT INTO data (id, amount) VALUES ({member.id}, 5000) ") #Adding member to database
-	          await ctx.send(f"Member {member.name}#{member.discriminator} has been added to the database") #Reporting to the user on who get added
+	      		targetname = member.name + member.discriminator
+	          cur.execute(f"INSERT INTO data (id, name, amount) VALUES ({member.id}, {targetname}, 5000) ") #Adding member to database
+	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
     conn.commit() #Commiting the changes to the database
@@ -59,20 +60,20 @@ async def wipe(ctx):
 	await ctx.send("Table Wiped") #Report to user
 	
 @bot.command()
-async def list(ctx):
+async def rich(ctx):
 	connectsql() #Connect to database
 	for guild in bot.guilds: #looping though all servers
 		for member in guild.members: #looping though all members
 			targetid = member.id #Getting the ID of a member
-			cur.execute(f"SELECT * FROM data WHERE id = {targetid}") #Search in the database about the user with that ID
+			cur.execute(f"SELECT * FROM data ORDER BY amount") #Search in the database about the user with that ID
 			while True:
 				row = cur.fetchone() #Get the data on that user
 				if row == None:
 					break #If the data is not found, skip
-				await ctx.send(f"ID: {row[0]}\nName: {member.name}#{member.discriminator}\nBalance: {row[1]}") #Reporting data
+				await ctx.send(f"ID: {row[0]}\nName: {row[1]}\nBalance: {row[2]}") #Reporting data
 				time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
-				
+								
 @bot.command()
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
@@ -82,12 +83,12 @@ async def rob(ctx, target : discord.Member):
 	row = cur.fetchone() #Get data of the victim
 	if row == None:
 		await ctx.send("Unable to find target") #Report if the user is not found
-	targetbal = row[1] #Saving the balance data of the victim
+	targetbal = row[2] #Saving the balance data of the victim
 	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}") #Getting the data of the attacker
 	row = cur.fetchone() #Get data of attacker
 	if row == None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
-	attackerbal = row[1]	#Saving data of attacker
+	attackerbal = row[2]	#Saving data of attacker
 	successmin = 40 #Minimum success number
 	roll1 = random.randint(1,100) # Generate first number
 	if roll1 >= successmin: #Check if the attacker succeed
