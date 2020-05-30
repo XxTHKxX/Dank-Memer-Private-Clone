@@ -14,6 +14,8 @@ status = cycle(['Looking at the records', 'transferring money', 'Waiting for dra
 async def change_status():
     await bot.change_presence(activity=discord.Game(next(status)))
     
+ownerid = [708645600165625872, 419742289188093952]
+
 @bot.event
 async def on_ready():
     change_status.start()
@@ -33,6 +35,7 @@ def connectsql():
   cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
+@commands.has_permissions(Administrator=True)
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
@@ -49,7 +52,8 @@ async def init(ctx):
 	      	
     conn.commit() #Commiting the changes to the database
     conn.close() #Closing the database connection
-
+    
+@commands.has_permissions(Administrator=True)
 @bot.command()
 async def wipe(ctx):
 	connectsql() # Connect to database
@@ -68,7 +72,7 @@ async def rich(ctx):
 		for row in rows:
 			if row == None:
 				break #If the data is not found, skip
-			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
+			await ctx.send(f" gc Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 			time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
 								
