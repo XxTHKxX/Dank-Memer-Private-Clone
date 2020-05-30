@@ -35,7 +35,7 @@ def connectsql():
   cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
-@commands.has_permissions(Administrator=True)
+@commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
@@ -53,7 +53,7 @@ async def init(ctx):
     conn.commit() #Commiting the changes to the database
     conn.close() #Closing the database connection
     
-@commands.has_permissions(Administrator=True)
+@commands.has_permissions(administrator=True)
 @bot.command()
 async def wipe(ctx):
 	connectsql() # Connect to database
