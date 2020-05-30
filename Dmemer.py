@@ -65,11 +65,12 @@ async def rich(ctx):
 	for guild in bot.guilds: #looping though all servers
 		for member in guild.members: #looping though all members	
 			cur.execute(f"SELECT * FROM data ORDER BY amount") #Search in the database about the user with that ID
-			row = cur.fetchone() #Get the data on that user
-			if row == None:
-				break #If the data is not found, skip
-			await ctx.send(f"ID: {row[0]}\nName: {row[1]}\nBalance: {row[2]}") #Reporting data
-			time.sleep(0.75) #Wait 0.75 seconds
+			rows = cur.fetchall() #Get the data on that user
+			for row in rows:
+				if row == None:
+					break #If the data is not found, skip
+				await ctx.send(f"ID: {row[0]}\nName: {row[1]}\nBalance: {row[2]}") #Reporting data
+				time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
 								
 @bot.command()
