@@ -63,7 +63,7 @@ async def wipe(ctx):
 async def rich(ctx):
 	connectsql() #Connect to database
 	for guild in bot.guilds: #looping though all servers
-		cur.execute(f"SELECT * FROM data ORDER BY amount") #Search in the database about the user with that ID
+		cur.execute(f"SELECT * FROM data ORDER BY amount ASC") #Search in the database about the user with that ID
 		rows = cur.fetchall() #Get the data on that user
 		for row in rows:
 			if row == None:
