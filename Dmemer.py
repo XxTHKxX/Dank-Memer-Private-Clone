@@ -40,7 +40,7 @@ def connectsql():
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER, lastdaily INTEGER)") #Start the database creation process
+    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER, lastdaily TIMESTAMP)") #Start the database creation process
     for guild in bot.guilds: #Looping though all servers
 	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
@@ -83,7 +83,7 @@ async def rich(ctx):
 async def daily(ctx):
 	connectsql()
 	userid = ctx.author.id
-	redeemtime = int(date.today())
+	redeemtime = date.today()
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
 	currentbal = data[2]
