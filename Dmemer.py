@@ -48,7 +48,7 @@ async def init(ctx):
 	          targetname = repr(member.name + "#" + member.discriminator)
 	          cur.execute("SELECT CURRENT_DATE")
 	          currenttime = str(cur.fetchone())
-	          cur.execute(f"INSERT INTO data (id, username, amount, lastdaily) VALUES ({member.id}, {targetname}, 5000, {currenttime})") #Adding member to database
+	          cur.execute(f"INSERT INTO data (id, username, lastdaily, amount) VALUES ({member.id}, {targetname}, {currenttime}, 5000)") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
@@ -87,8 +87,8 @@ async def daily(ctx):
 	redeemtime = str(cur.fetchone())
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
-	currentbal = data[2]
-	lastredeem = data[3]
+	currentbal = data[3]
+	lastredeem = data[2]
 	if redeemtime == lastredeem:
 		await ctx.send("Sorry! you've already redeemed your daily box today, try again tomorrow")
 	else:
@@ -108,12 +108,12 @@ async def rob(ctx, target : discord.Member):
 	row = cur.fetchone() #Get data of the victim
 	if row == None:
 		await ctx.send("Unable to find target") #Report if the user is not found
-	targetbal = row[2] #Saving the balance data of the victim
+	targetbal = row[3] #Saving the balance data of the victim
 	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}") #Getting the data of the attacker
 	row = cur.fetchone() #Get data of attacker
 	if row == None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
-	attackerbal = row[2]	#Saving data of attacker
+	attackerbal = row[3]	#Saving data of attacker
 	successmin = 40 #Minimum success number
 	roll1 = random.randint(1,100) # Generate first number
 	if roll1 >= successmin: #Check if the attacker succeed
