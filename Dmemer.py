@@ -83,7 +83,7 @@ async def rich(ctx):
 async def daily(ctx):
 	connectsql()
 	userid = ctx.author.id
-	redeemtime = date.today()
+	redeemtime = int(date.today())
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
 	currentbal = data[2]
