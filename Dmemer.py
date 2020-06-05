@@ -3,7 +3,6 @@ import psycopg2
 import os
 import time
 import random
-from datetime import date
 from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
@@ -47,7 +46,8 @@ async def init(ctx):
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
 	          targetname = repr(member.name + "#" + member.discriminator)
-	          currenttime = date.today()
+	          cur.execute("SELECT CURRENT_DATE")
+	          currenttime = cur.fetchone()
 	          cur.execute(f"INSERT INTO data (id, username, amount, lastdaily) VALUES ({member.id}, {targetname}, 5000, {currenttime})") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
@@ -83,7 +83,8 @@ async def rich(ctx):
 async def daily(ctx):
 	connectsql()
 	userid = ctx.author.id
-	redeemtime = str(date.today())
+	cur.execute("SELECT CURRENT_DATE")
+	redeemtime = cur.fetchone()
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
 	currentbal = data[2]
