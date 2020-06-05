@@ -47,7 +47,7 @@ async def init(ctx):
 	      	else:
 	          targetname = repr(member.name + "#" + member.discriminator)
 	          cur.execute("SELECT CURRENT_DATE")
-	          currenttime = cur.fetchone()
+	          currenttime = repr(cur.fetchone())
 	          cur.execute(f"INSERT INTO data (id, username, amount, lastdaily) VALUES ({member.id}, {targetname}, 5000, {currenttime})") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
@@ -84,7 +84,7 @@ async def daily(ctx):
 	connectsql()
 	userid = ctx.author.id
 	cur.execute("SELECT CURRENT_DATE")
-	redeemtime = cur.fetchone()
+	redeemtime = repr(cur.fetchone())
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
 	currentbal = data[2]
