@@ -75,26 +75,6 @@ async def rich(ctx):
 			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 			time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
-
-
-@bot.command()
-async def daily(ctx):
-	connectsql()
-	userid = ctx.author.id
-	cur.execute("SELECT CURRENT_DATE")
-	redeemtime = str(cur.fetchone())
-	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
-	data = cur.fetchone()
-	currentbal = data[2]
-	if redeemtime == lastredeem:
-		await ctx.send("Sorry! you've already redeemed your daily box today, try again tomorrow")
-	else:
-		amount = random.randint(-5000,10000)
-		newbal = currentbal + amount
-		cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {userid}")
-		await ctx.send(f"Daily box redeemed, you got {amount}, your new balance is {newbal}")
-		conn.commit()
-		conn.close()
 					
 @bot.command()
 async def rob(ctx, target : discord.Member):
