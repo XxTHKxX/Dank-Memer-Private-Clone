@@ -83,7 +83,7 @@ async def rich(ctx):
 async def daily(ctx):
 	connectsql()
 	userid = ctx.author.id
-	redeemtime = repr(date.today())
+	redeemtime = date.today()
 	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
 	data = cur.fetchone()
 	currentbal = data[2]
@@ -94,6 +94,7 @@ async def daily(ctx):
 		amount = random.randint(-5000,10000)
 		newbal = currentbal + amount
 		cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {userid}")
+		await ctx.send(f"Daily box redeemed, you got {amount}, your new balance is {newbal}")
 		conn.commit()
 		conn.close()
 					
