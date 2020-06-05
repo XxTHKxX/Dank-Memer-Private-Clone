@@ -40,7 +40,7 @@ def connectsql():
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER, lastdaily TEXT)") #Start the database creation process
+    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER, lastdaily DATE)") #Start the database creation process
     for guild in bot.guilds: #Looping though all servers
 	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
