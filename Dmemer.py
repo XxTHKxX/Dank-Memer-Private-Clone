@@ -3,6 +3,7 @@ import psycopg2
 import os
 import time
 import random
+from datetime import date
 from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
@@ -39,14 +40,15 @@ def connectsql():
 @bot.command()
 async def init(ctx):
     connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
+    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER, lastdaily TEXT)") #Start the database creation process
     for guild in bot.guilds: #Looping though all servers
 	      for member in guild.members: #Looping though all members
 	      	if member.bot == True:
 	      		pass #Checking if a user is a bot, if True, skip this user
 	      	else:
 	          targetname = repr(member.name + "#" + member.discriminator)
-	          cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
+	          currenttime = repr(date.today())
+	          cur.execute(f"INSERT INTO data (id, username, amount, lastdaily) VALUES ({member.id}, {targetname}, 5000, {currenttime})") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
 	      	
@@ -75,7 +77,26 @@ async def rich(ctx):
 			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 			time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
-								
+
+
+@bot.command()
+async def daily(ctx):
+	connectsql()
+	userid = ctx.author.id
+	redeemtime = repr(date.today())
+	cur.execute(f"SELECT * FROM data WHERE id = {userid}")
+	data = cur.fetchone()
+	currentbal = data[2]
+	lastredeem = data[3]
+	if redeemtime == lastredeem:
+		await ctx.send("Sorry! you've already redeemed your daily box today, try again tomorrow")
+	else:
+		amount = random.randint(-5000,10000)
+		newbal = currentbal + amount
+		cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {userid}")
+		conn.commit()
+		conn.close()
+					
 @bot.command()
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
