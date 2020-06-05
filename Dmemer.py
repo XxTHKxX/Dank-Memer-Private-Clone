@@ -48,6 +48,7 @@ async def init(ctx):
 	          targetname = repr(member.name + "#" + member.discriminator)
 	          cur.execute("SELECT CURRENT_DATE")
 	          currenttime = str(cur.fetchone())
+	          print(currenttime)
 	          cur.execute(f"INSERT INTO data (id, username, lastdaily, amount) VALUES ({member.id}, {targetname}, {currenttime}, 5000)") #Adding member to database
 	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
 	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
