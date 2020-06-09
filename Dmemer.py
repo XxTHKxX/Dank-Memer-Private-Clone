@@ -126,7 +126,21 @@ async def rich(ctx):
 			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 			time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
-					
+
+@bot.command()
+async def bal(ctx, target=checkself: discord.Member):
+		connectsql()
+		if target == checkself:
+			user = ctx.author.id
+		else:
+			user = target
+		cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
+		data = cur.fetchone()
+		balance = data[2]
+		await ctx.send(f"Balance of {user} is: {balance}")
+		conn.close()
+							
+															
 @bot.command()
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
