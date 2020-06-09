@@ -23,7 +23,7 @@ def connectsql():
   cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
-@tasks.loop(seconds=300)
+@tasks.loop(seconds=60)
 async def drop():
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,100)
