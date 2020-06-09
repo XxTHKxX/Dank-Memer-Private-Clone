@@ -66,7 +66,7 @@ async def drop():
 						data = cur.fetchone()
 						newbal = 0
 						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there's a bomb inside and you died")
+						await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there was an activated bomb inside the lootbox. You explode in a spectacular show of flesh and blood. You also lost all your money.")
 				conn.commit()
 				conn.close()
 				
