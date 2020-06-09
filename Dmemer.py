@@ -23,10 +23,10 @@ def connectsql():
   cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=300)
 async def drop():
 		gamechannel = bot.get_channel(709503535582150676)
-		chance = random.randint(1,9999)
+		chance = random.randint(1,100)
 		number = random.randint(1000,9999)
 		amount = random.randint(0,10000)
 		def check(m):
@@ -34,13 +34,13 @@ async def drop():
 				return int(m.content) == number and m.channel == gamechannel
 			else:
 				pass
-		if chance > 5000:
-			bomb = random.randint(1,2)
+		if chance >=95:
+			bomb = random.randint(0,100)
 			if bomb != 1:
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
 				try:
-					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+					answer = await bot.wait_for('message', check=check, timeout = 8.0)
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
@@ -57,7 +57,7 @@ async def drop():
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
 				try:
-					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+					answer = await bot.wait_for('message', check=check, timeout = 8.0)
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
@@ -66,7 +66,7 @@ async def drop():
 						data = cur.fetchone()
 						newbal = 0
 						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
+						await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there's a bomb inside and you died")
 				conn.commit()
 				conn.close()
 				
@@ -183,7 +183,7 @@ async def forcedrop(ctx):
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
 				try:
-					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+					answer = await bot.wait_for('message', check=check, timeout = 8.0)
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
@@ -200,7 +200,7 @@ async def forcedrop(ctx):
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
 				try:
-					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+					answer = await bot.wait_for('message', check=check, timeout = 8.0)
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
