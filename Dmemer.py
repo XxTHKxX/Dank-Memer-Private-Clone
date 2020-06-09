@@ -128,9 +128,9 @@ async def rich(ctx):
 	conn.close() #Close connection
 
 @bot.command()
-async def bal(ctx, target=checkself: discord.Member):
+async def bal(ctx, target : discord.Member ="checkself"):
 		connectsql()
-		if target == checkself:
+		if target == "checkself":
 			user = ctx.author.id
 		else:
 			user = target
