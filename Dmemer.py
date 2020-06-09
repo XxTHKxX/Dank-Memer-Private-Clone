@@ -31,7 +31,7 @@ async def drop():
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
 		if chance == 1:
-			bomb = random.randint(1.99)
+			bomb = random.randint(1,99)
 			if bomb != 1:
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
@@ -177,7 +177,7 @@ async def forcedrop(ctx):
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
 		if True:
-			bomb = random.randint(1.99)
+			bomb = random.randint(1,99)
 			if bomb != 1:
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
