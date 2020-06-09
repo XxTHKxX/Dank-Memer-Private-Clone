@@ -168,7 +168,8 @@ async def rob(ctx, target : discord.Member):
 	conn.commit() #Commit data to database
 	conn.close() #Close connection
 	
-
+@commands.has_permissions(administrator=True)
+@bot.command()
 async def forcedrop():
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,999)
