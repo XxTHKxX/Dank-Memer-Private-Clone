@@ -139,6 +139,20 @@ async def bal(ctx, target : discord.Member):
 		balance = data[2]
 		await ctx.send(f"Balance of {user} is: {balance}")
 		conn.close()
+		
+@bot.command()
+async def balbeta(ctx, target = discord.Member):
+		connectsql()
+		embed=discord.Embed(color=0xffff00)
+		message = f"Balance of {target}"
+		cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
+		data = cur.fetchone()
+		amount = data[2]
+		embed.add_field(name=message, value=amount, inline=True)
+		embed.set_image(url="https://i.postimg.cc/hv8Hmrd1/Adobe-20200513-161915.png")
+		embed.set_footer(text="Bot made by Xx_THK_xX")
+		await bot.say(embed=embed)
+		conn.close()
 							
 															
 @bot.command()
