@@ -13,19 +13,6 @@ status = cycle(['Looking at the records', 'transferring money', 'Waiting for dra
 @tasks.loop(seconds=2)
 async def change_status():
     await bot.change_presence(activity=discord.Game(next(status)))
-    
-ownerid = [708645600165625872, 419742289188093952]
-
-@bot.event
-async def on_ready():
-    change_status.start()
-    print('Ready.')
-# When bot is ready it'll start the status change routine and print the Ready message in the log
-
-@bot.command()
-async def ping(ctx):
-    await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
-#No need to explain this one -.-
 
 def connectsql():	
   DATABASE_URL = os.environ['DATABASE_URL']
@@ -34,6 +21,42 @@ def connectsql():
   global cur
   cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
+
+@tasks.loop(seconds=5)
+async def drop():
+		connectsql()
+		gamechannel = bot.get_channel(709503535582150676)
+		chance = random.randint(1,999)
+		number = random.randint(1000,9999)
+		def check(m):
+			return int(m.content) == number and m.channel == gamechannel
+		if chance == 999:
+			bomb = random.randint(1.99)
+			if bomb != 1:
+				gamechannel.send(f"Quick! A lootbox has been dropped! Type {number} to get it!")
+				try:
+					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+				except asyncio.TimeoutError:
+					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
+				else: 
+					if int(answer) == number:
+						cur.execute(f"SELECT * FROM data WHERE id = {}")
+				
+				
+			
+			
+ownerid = [708645600165625872, 419742289188093952]
+
+@bot.event
+async def on_ready():
+		change_status.start()
+		print('Ready.')
+# When bot is ready it'll start the status change routine and print the Ready message in the log
+
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
+#No need to explain this one -.-
 
 @commands.has_permissions(administrator=True)
 @bot.command()
