@@ -41,7 +41,7 @@ async def drop():
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
-					if int(answer) == number:
+					if int(answer.content) == number:
 						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
 						data = cur.fetchone()
 						currentbal = data[2]
@@ -58,7 +58,7 @@ async def drop():
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
-					if int(answer) == number:
+					if int(answer.content) == number:
 						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
 						data = cur.fetchone()
 						newbal = 0
@@ -188,7 +188,7 @@ async def forcedrop(ctx):
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
-					if int(answer) == number:
+					if int(answer.content) == number:
 						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
 						data = cur.fetchone()
 						currentbal = data[2]
@@ -205,7 +205,7 @@ async def forcedrop(ctx):
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
-					if int(answer) == number:
+					if int(answer.content) == number:
 						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
 						data = cur.fetchone()
 						newbal = 0
