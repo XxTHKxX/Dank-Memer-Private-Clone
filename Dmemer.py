@@ -31,7 +31,7 @@ async def drop():
 		amount = random.randint(0,10000)
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
-		if chance == 1:
+		if chance >1:
 			bomb = random.randint(1,99)
 			if bomb != 1:
 				connectsql()
