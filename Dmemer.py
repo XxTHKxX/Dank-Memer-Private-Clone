@@ -26,7 +26,7 @@ def connectsql():
 @tasks.loop(seconds=5)
 async def drop():
 		gamechannel = bot.get_channel(709503535582150676)
-		chance = random.randint(1,999)
+		chance = random.randint(1,9999)
 		number = random.randint(1000,9999)
 		amount = random.randint(0,10000)
 		def check(m):
@@ -34,7 +34,7 @@ async def drop():
 				return int(m.content) == number and m.channel == gamechannel
 			else:
 				pass
-		if chance > 1:
+		if chance > 5000:
 			bomb = random.randint(1,99)
 			if bomb != 1:
 				connectsql()
