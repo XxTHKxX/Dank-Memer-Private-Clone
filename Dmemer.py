@@ -27,7 +27,8 @@ def connectsql():
 async def drop():
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,999)
-		amount = random.randint(1000,9999)
+		number = random.randint(1000,9999)
+		amount = random.randint(0,10000)
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
 		if chance == 1:
@@ -173,7 +174,8 @@ async def rob(ctx, target : discord.Member):
 async def forcedrop(ctx):
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,999)
-		amount = random.randint(1000,9999)
+		number = random.randint(1000,9999)
+		amount = random.randint(0,10000)
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
 		if True:
