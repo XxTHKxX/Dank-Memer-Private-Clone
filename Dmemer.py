@@ -3,6 +3,7 @@ import psycopg2
 import os
 import time
 import random
+import asyncio
 from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
@@ -24,23 +25,51 @@ def connectsql():
 
 @tasks.loop(seconds=5)
 async def drop():
-		connectsql()
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,999)
-		number = random.randint(1000,9999)
+		amount = random.randint(1000,9999)
 		def check(m):
 			return int(m.content) == number and m.channel == gamechannel
-		if chance == 999:
+		if chance == 1:
 			bomb = random.randint(1.99)
 			if bomb != 1:
-				gamechannel.send(f"Quick! A lootbox has been dropped! Type {number} to get it!")
+				connectsql()
+				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
 				try:
 					answer = await bot.wait_for('message', check=check, timeout = 5.0)
 				except asyncio.TimeoutError:
 					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 				else: 
 					if int(answer) == number:
-						cur.execute(f"SELECT * FROM data WHERE id = {}")
+						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+						data = cur.fetchone()
+						currentbal = data[2]
+						newbal = currentbal + amount
+						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+						await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
+				conn.commit()
+				conn.close()
+			else:
+				connectsql()
+				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+				try:
+					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+				except asyncio.TimeoutError:
+					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
+				else: 
+					if int(answer) == number:
+						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+						data = cur.fetchone()
+						newbal = 0
+						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+						await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
+				conn.commit()
+				conn.close()
+						
+				
+						
+						
+						
 				
 				
 			
@@ -50,6 +79,7 @@ ownerid = [708645600165625872, 419742289188093952]
 @bot.event
 async def on_ready():
 		change_status.start()
+		drop.start()
 		print('Ready.')
 # When bot is ready it'll start the status change routine and print the Ready message in the log
 
@@ -139,5 +169,47 @@ async def rob(ctx, target : discord.Member):
 	conn.close() #Close connection
 	
 
+async def forcedrop():
+		gamechannel = bot.get_channel(709503535582150676)
+		chance = random.randint(1,999)
+		amount = random.randint(1000,9999)
+		def check(m):
+			return int(m.content) == number and m.channel == gamechannel
+		if True:
+			bomb = random.randint(1.99)
+			if bomb != 1:
+				connectsql()
+				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+				try:
+					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+				except asyncio.TimeoutError:
+					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
+				else: 
+					if int(answer) == number:
+						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+						data = cur.fetchone()
+						currentbal = data[2]
+						newbal = currentbal + amount
+						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+						await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
+				conn.commit()
+				conn.close()
+			else:
+				connectsql()
+				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+				try:
+					answer = await bot.wait_for('message', check=check, timeout = 5.0)
+				except asyncio.TimeoutError:
+					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
+				else: 
+					if int(answer) == number:
+						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+						data = cur.fetchone()
+						newbal = 0
+						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+						await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
+				conn.commit()
+				conn.close()
+				
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
