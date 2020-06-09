@@ -30,8 +30,11 @@ async def drop():
 		number = random.randint(1000,9999)
 		amount = random.randint(0,10000)
 		def check(m):
-			return int(m.content) == number and m.channel == gamechannel
-		if chance >1:
+			if m.content.isnumeric() == True:
+				return int(m.content) == number and m.channel == gamechannel
+			else:
+				pass
+		if chance > 1:
 			bomb = random.randint(1,99)
 			if bomb != 1:
 				connectsql()
@@ -66,12 +69,6 @@ async def drop():
 						await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
 				conn.commit()
 				conn.close()
-						
-				
-						
-						
-						
-				
 				
 			
 			
@@ -173,11 +170,13 @@ async def rob(ctx, target : discord.Member):
 @bot.command()
 async def forcedrop(ctx):
 		gamechannel = bot.get_channel(709503535582150676)
-		chance = random.randint(1,999)
 		number = random.randint(1000,9999)
 		amount = random.randint(0,10000)
 		def check(m):
-			return int(m.content) == number and m.channel == gamechannel
+			if m.content.isnumeric() == True:
+				return int(m.content) == number and m.channel == gamechannel
+			else:
+				pass
 		if True:
 			bomb = random.randint(1,99)
 			if bomb != 1:
