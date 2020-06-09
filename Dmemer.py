@@ -141,12 +141,11 @@ async def bal(ctx, target : discord.Member):
 		conn.close()
 		
 @bot.command()
-async def balbeta(ctx, target = discord.Member):
+async def balbeta(ctx, target : discord.Member):
 		connectsql()
 		embed=discord.Embed(color=0xffff00)
-		user = target
 		message = f"Balance of {target}"
-		cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
+		cur.execute(f"SELECT * FROM data WHERE id = {target.id}")
 		data = cur.fetchone()
 		amount = data[2]
 		embed.add_field(name=message, value=amount, inline=True)
