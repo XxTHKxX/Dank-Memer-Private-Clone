@@ -170,7 +170,7 @@ async def rob(ctx, target : discord.Member):
 	
 @commands.has_permissions(administrator=True)
 @bot.command()
-async def forcedrop():
+async def forcedrop(ctx):
 		gamechannel = bot.get_channel(709503535582150676)
 		chance = random.randint(1,999)
 		amount = random.randint(1000,9999)
