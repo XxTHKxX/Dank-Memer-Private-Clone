@@ -35,7 +35,7 @@ async def drop():
 			else:
 				pass
 		if chance > 5000:
-			bomb = random.randint(1,99)
+			bomb = random.randint(1,2)
 			if bomb != 1:
 				connectsql()
 				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
