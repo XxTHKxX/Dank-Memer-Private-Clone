@@ -34,7 +34,7 @@ async def drop():
 				return int(m.content) == number and m.channel == gamechannel
 			else:
 				pass
-		if chance >=95:
+		if chance >=75:
 			bomb = random.randint(0,100)
 			if bomb != 1:
 				connectsql()
