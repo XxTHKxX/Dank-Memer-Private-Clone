@@ -7,103 +7,103 @@ import asyncio
 from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
- 
+
 bot = commands.Bot(command_prefix='n!')
 #Status Change
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
 @tasks.loop(seconds=2)
 async def change_status():
-    await bot.change_presence(activity=discord.Game(next(status)))
-
-def connectsql():	
-  DATABASE_URL = os.environ['DATABASE_URL']
-  global conn
-  conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-  global cur
-  cur = conn.cursor()
+	await bot.change_presence(activity=discord.Game(next(status)))
+	
+def connectsql():
+	DATABASE_URL = os.environ['DATABASE_URL']
+	global conn
+	conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+	global cur
+	cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
 @tasks.loop(seconds=60)
 async def drop():
-		gamechannel = bot.get_channel(709503535582150676)
-		chance = random.randint(1,100)
-		number = random.randint(1000,9999)
-		amount = random.randint(0,10000)
-		def check(m):
-			if m.content.isnumeric() == True:
-				return int(m.content) == number and m.channel == gamechannel
+	gamechannel = bot.get_channel(709503535582150676)
+	chance = random.randint(1,100)
+	number = random.randint(1000,9999)
+	amount = random.randint(0,10000)
+	def check(m):
+		if m.content.isnumeric() == True:
+			return int(m.content) == number and m.channel == gamechannel
+		else:
+			pass
+	if chance >=99:
+		bomb = random.randint(0,100)
+		if bomb != 1:
+			connectsql()
+			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+			try:
+				answer = await bot.wait_for('message', check=check, timeout = 8.0)
+			except asyncio.TimeoutError:
+				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 			else:
-				pass
-		if chance >=99:
-			bomb = random.randint(0,100)
-			if bomb != 1:
-				connectsql()
-				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-				try:
-					answer = await bot.wait_for('message', check=check, timeout = 8.0)
-				except asyncio.TimeoutError:
-					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-				else: 
-					if int(answer.content) == number:
-						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-						data = cur.fetchone()
-						currentbal = data[2]
-						newbal = currentbal + amount
-						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
-				conn.commit()
-				conn.close()
+				if int(answer.content) == number:
+					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+					data = cur.fetchone()
+					currentbal = data[2]
+					newbal = currentbal + amount
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+					await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
+			conn.commit()
+			conn.close()
+		else:
+			connectsql()
+			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+			try:
+				answer = await bot.wait_for('message', check=check, timeout = 8.0)
+			except asyncio.TimeoutError:
+				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 			else:
-				connectsql()
-				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-				try:
-					answer = await bot.wait_for('message', check=check, timeout = 8.0)
-				except asyncio.TimeoutError:
-					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-				else: 
-					if int(answer.content) == number:
-						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-						data = cur.fetchone()
-						newbal = 0
-						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there was an activated bomb inside the lootbox. You explode in a spectacular show of flesh and blood. You also lost all your money.")
-				conn.commit()
-				conn.close()
-				
+				if int(answer.content) == number:
+					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+					data = cur.fetchone()
+					newbal = 0
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+					await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there was an activated bomb inside the lootbox. You explode in a spectacular show of flesh and blood. You also lost all your money.")
+			conn.commit()
+			conn.close()
+			
 			
 			
 ownerid = [708645600165625872, 419742289188093952]
 
 @bot.event
 async def on_ready():
-		change_status.start()
-		drop.start()
-		print('Ready.')
+	change_status.start()
+	drop.start()
+	print('Ready.')
 # When bot is ready it'll start the status change routine and print the Ready message in the log
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
+	await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 #No need to explain this one -.-
 
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
-    connectsql() #Connect to the database
-    cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
-    for guild in bot.guilds: #Looping though all servers
-	      for member in guild.members: #Looping though all members
-	      	if member.bot == True:
-	      		pass #Checking if a user is a bot, if True, skip this user
-	      	else:
-	          targetname = repr(member.name + "#" + member.discriminator)
-	          cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
-	          await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
-	          time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
-	      	
-    conn.commit() #Commiting the changes to the database
-    conn.close() #Closing the database connection
-    
+	connectsql() #Connect to the database
+	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
+	for guild in bot.guilds: #Looping though all servers
+		for member in guild.members: #Looping though all members
+			if member.bot == True:
+				pass #Checking if a user is a bot, if True, skip this user
+			else:
+				targetname = repr(member.name + "#" + member.discriminator)
+				cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
+				await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
+				time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
+				
+	conn.commit() #Commiting the changes to the database
+	conn.close() #Closing the database connection
+	
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def wipe(ctx):
@@ -126,35 +126,35 @@ async def rich(ctx):
 			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 			time.sleep(0.75) #Wait 0.75 seconds
 	conn.close() #Close connection
-
+	
 @bot.command()
 async def bal(ctx, target : discord.Member):
-		connectsql()
-		if target == None:
-			user = ctx.author.id
-		else:
-			user = target
-		cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
-		data = cur.fetchone()
-		balance = data[2]
-		await ctx.send(f"Balance of {user} is: {balance}")
-		conn.close()
-		
+	connectsql()
+	if target == None:
+		user = ctx.author.id
+	else:
+		user = target
+	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
+	data = cur.fetchone()
+	balance = data[2]
+	await ctx.send(f"Balance of {user} is: {balance}")
+	conn.close()
+	
 @bot.command()
 async def balbeta(ctx, target : discord.Member):
-		connectsql()
-		embed=discord.Embed(color=0xffff00)
-		message = f"Balance of {target}"
-		cur.execute(f"SELECT * FROM data WHERE id = {target.id}")
-		data = cur.fetchone()
-		amount = data[2]
-		embed.add_field(name=message, value=amount, inline=True)
-		embed.set_image(url="https://i.postimg.cc/hv8Hmrd1/Adobe-20200513-161915.png")
-		embed.set_footer(text="Bot made by Xx_THK_xX")
-		await ctx.send(embed=embed)
-		conn.close()
-							
-															
+	connectsql()
+	embed=discord.Embed(color=0xffff00)
+	message = f"Balance of {target}"
+	cur.execute(f"SELECT * FROM data WHERE id = {target.id}")
+	data = cur.fetchone()
+	amount = data[2]
+	embed.add_field(name=message, value=amount, inline=True)
+	embed.set_image(url="https://i.postimg.cc/hv8Hmrd1/Adobe-20200513-161915.png")
+	embed.set_footer(text="Bot made by Xx_THK_xX")
+	await ctx.send(embed=embed)
+	conn.close()
+	
+	
 @bot.command()
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
@@ -169,7 +169,7 @@ async def rob(ctx, target : discord.Member):
 	row = cur.fetchone() #Get data of attacker
 	if row == None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
-	attackerbal = row[2]	#Saving data of attacker
+	attackerbal = row[2]    #Saving data of attacker
 	successmin = 40 #Minimum success number
 	roll1 = random.randint(1,100) # Generate first number
 	if roll1 >= successmin: #Check if the attacker succeed
@@ -188,58 +188,59 @@ async def rob(ctx, target : discord.Member):
 		death = 10
 		if roll2 <= death: #Check if that user is really gonna die
 			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}") #Delete their money
-			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")	#INSULT
+			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")   #INSULT
 		else:
-			await ctx.send("You Failed the rob, noooob")	 #Report if they failed
+			await ctx.send("You Failed the rob, noooob")     #Report if they failed
 	conn.commit() #Commit data to database
 	conn.close() #Close connection
 	
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def forcedrop(ctx):
-		gamechannel = bot.get_channel(709503535582150676)
-		number = random.randint(1000,9999)
-		amount = random.randint(0,10000)
-		def check(m):
-			if m.content.isnumeric() == True:
-				return int(m.content) == number and m.channel == gamechannel
+	gamechannel = bot.get_channel(709503535582150676)
+	number = random.randint(1000,9999)
+	amount = random.randint(0,10000)
+	def check(m):
+		if m.content.isnumeric() == True:
+			return int(m.content) == number and m.channel == gamechannel
+		else:
+			pass
+	if True:
+		bomb = random.randint(1,99)
+		if bomb != 1:
+			connectsql()
+			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+			try:
+				answer = await bot.wait_for('message', check=check, timeout = 8.0)
+			except asyncio.TimeoutError:
+				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 			else:
-				pass
-		if True:
-			bomb = random.randint(1,99)
-			if bomb != 1:
-				connectsql()
-				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-				try:
-					answer = await bot.wait_for('message', check=check, timeout = 8.0)
-				except asyncio.TimeoutError:
-					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-				else: 
-					if int(answer.content) == number:
-						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-						data = cur.fetchone()
-						currentbal = data[2]
-						newbal = currentbal + amount
-						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
-				conn.commit()
-				conn.close()
+				if int(answer.content) == number:
+					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+					data = cur.fetchone()
+					currentbal = data[2]
+					newbal = currentbal + amount
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+					await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
+			conn.commit()
+			conn.close()
+		else:
+			connectsql()
+			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
+			try:
+				answer = await bot.wait_for('message', check=check, timeout = 8.0)
+			except asyncio.TimeoutError:
+				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
 			else:
-				connectsql()
-				await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-				try:
-					answer = await bot.wait_for('message', check=check, timeout = 8.0)
-				except asyncio.TimeoutError:
-					await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-				else: 
-					if int(answer.content) == number:
-						cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-						data = cur.fetchone()
-						newbal = 0
-						cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-						await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
-				conn.commit()
-				conn.close()
-				
+				if int(answer.content) == number:
+					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+					data = cur.fetchone()
+					newbal = 0
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+					await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
+			conn.commit()
+			conn.close()
+			
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
+
