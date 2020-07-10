@@ -25,7 +25,7 @@ def connectsql():
 
 @tasks.loop(seconds=60)
 async def drop():
-	gamechannel = bot.get_channel(709503535582150676)
+	gamechannel = bot.get_channel(724274805381267498)
 	chance = random.randint(1,200)
 	number = random.randint(1000,9999)
 	amount = random.randint(0,10000)
@@ -197,7 +197,7 @@ async def rob(ctx, target : discord.Member):
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def forcedrop(ctx):
-	gamechannel = bot.get_channel(709503535582150676)
+	gamechannel = bot.get_channel(724274805381267498)
 	number = random.randint(1000,9999)
 	amount = random.randint(0,10000)
 	def check(m):
@@ -243,4 +243,6 @@ async def forcedrop(ctx):
 			
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
+
+
 
