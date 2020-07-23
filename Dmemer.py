@@ -8,7 +8,7 @@ from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
 
-bot = commands.Bot(command_prefix='n!', case_insensitive = True)
+bot = commands.Bot(command_prefix=['n!', 'N!'], case_insensitive = True)
 #Status Change
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
 @tasks.loop(seconds=2)
