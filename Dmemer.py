@@ -124,7 +124,7 @@ async def rich(ctx):
 		for row in rows:
 			if row == None:
 				break #If the data is not found, skip
-			currentdata = currentdata + (f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
+			currentdata = currentdata + "\n" + (f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
 						
 	await ctx.send(currentdata)
 	conn.close() #Close connection
