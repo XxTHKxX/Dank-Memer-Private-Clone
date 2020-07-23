@@ -123,8 +123,9 @@ async def rich(ctx):
 		for row in rows:
 			if row == None:
 				break #If the data is not found, skip
-			await ctx.send(f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
-			time.sleep(0.75) #Wait 0.75 seconds
+			currentdata = currentdata + "/n" + (f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
+						
+	await ctx.send(currentdata)
 	conn.close() #Close connection
 	
 @bot.command()
