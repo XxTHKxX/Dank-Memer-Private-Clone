@@ -117,6 +117,7 @@ async def wipe(ctx):
 @bot.command()
 async def rich(ctx):
 	connectsql() #Connect to database
+	currentdata = ''
 	for guild in bot.guilds: #looping though all servers
 		cur.execute(f"SELECT * FROM data ORDER BY amount DESC") #Search in the database about the user with that ID
 		rows = cur.fetchall() #Get the data on that user
