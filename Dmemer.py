@@ -263,7 +263,7 @@ async def forcedrop(ctx):
 async def on_message(message):
 	global antinsfw
 	if message.author.id == 285480424904327179 and antinsfw == True:
-		await bot.delete_message(message)
+		await message.delete()
 	else:
 		await bot.process_commands(message)
 					
