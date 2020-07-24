@@ -78,14 +78,30 @@ ownerid = [708645600165625872, 419742289188093952]
 async def on_ready():
 	change_status.start()
 	drop.start()
+	global antinsfw
+	antinsfw = False
 	print('Ready.')
 # When bot is ready it'll start the status change routine and print the Ready message in the log
+
 
 @bot.command()
 async def ping(ctx):
 	await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
 #No need to explain this one -.-
 
+
+@commands.has_permissions(administrator=True)
+@bot.command()
+async def nonsfw(ctx, option):
+	global antinsfw
+	if option == 'yes':
+		antinsfw = True
+		await ctx.send('Beginning to cleanise this chat')
+	elif option == 'no':
+		antinsfw = False
+		await ctx.send('Okay, entering the dark side')
+		
+		
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
@@ -242,7 +258,14 @@ async def forcedrop(ctx):
 					await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
 			conn.commit()
 			conn.close()
-			
+
+@bot.event
+async def on_message(message):
+	if message.author.id == 285480424904327179 and antinsfw == True:
+		bot.delete_message(message)
+	else:
+		bot.process_commands(message)
+					
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
 
