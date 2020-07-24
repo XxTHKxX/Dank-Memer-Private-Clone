@@ -262,9 +262,9 @@ async def forcedrop(ctx):
 @bot.event
 async def on_message(message):
 	if message.author.id == 285480424904327179 and antinsfw == True:
-		bot.delete_message(message)
+		await bot.delete_message(message)
 	else:
-		bot.process_commands(message)
+		await bot.process_commands(message)
 					
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
