@@ -1,7 +1,6 @@
 import discord
 import psycopg2
 import os
-import time
 import random
 import asyncio
 from itertools import cycle
@@ -107,6 +106,7 @@ async def nonsfw(ctx, option):
 async def init(ctx):
 	connectsql() #Connect to the database
 	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
+	message = ''
 	for guild in bot.guilds: #Looping though all servers
 		for member in guild.members: #Looping though all members
 			if member.bot == True:
@@ -114,9 +114,10 @@ async def init(ctx):
 			else:
 				targetname = repr(member.name + "#" + member.discriminator)
 				cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
-				await ctx.send(f"Member {targetname} has been added to the database") #Reporting to the user on who get added
-				time.sleep(0.75) #Waiting 0.75 seconds to bypass discord rate limit
+				message = message + '\n' + (f"Member {targetname} has been added to the database")
+	await ctx.send(message)
 				
+				 
 	conn.commit() #Commiting the changes to the database
 	conn.close() #Closing the database connection
 	
