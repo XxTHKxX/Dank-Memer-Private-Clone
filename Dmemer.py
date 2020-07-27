@@ -168,7 +168,6 @@ async def balbeta(ctx, target : discord.Member):
 	data = cur.fetchone()
 	amount = data[2]
 	embed.add_field(name=message, value=amount, inline=True)
-	embed.set_image(url="https://i.postimg.cc/hv8Hmrd1/Adobe-20200513-161915.png")
 	embed.set_footer(text="Bot made by Xx_THK_xX")
 	await ctx.send(embed=embed)
 	conn.close()
