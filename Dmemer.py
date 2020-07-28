@@ -3,9 +3,13 @@ import psycopg2
 import os
 import random
 import asyncio
+import requests
+import json
+from urllib.parse import unquote
 from itertools import cycle
 from discord.ext import commands, tasks
 # Importing libraries
+
 
 bot = commands.Bot(command_prefix=['n!', 'N!'], case_insensitive = True)
 #Status Change
@@ -75,6 +79,7 @@ ownerid = [708645600165625872, 419742289188093952]
 
 @bot.event
 async def on_ready():
+	download_questions()
 	change_status.start()
 	drop.start()
 	global antinsfw
@@ -259,6 +264,34 @@ async def forcedrop(ctx):
 			conn.commit()
 			conn.close()
 
+
+def download_questions():
+	print('Downloading questions from Open Trivia DB...')
+	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
+	r = requests.get(api_url)
+	api_result = r.json()
+	questions = api_result['results']
+	processed_questions = []
+	for q in questions:
+		pq = {'category': unquote(q['category']),
+		      'difficulty': unquote(q['difficulty']),
+		      'question': unquote(q['question']),
+		      'correct': unquote(q['correct_answer']),
+		      'incorrect': [unquote(a) for a in q['incorrect_answers']]}
+		processed_questions.append(pq)
+		with open('questions.json', 'w') as f:
+			json.dump(questions, f, indent=2)	
+
+def getquestion():
+	with open('questions.json', 'r') as f:
+			questions = json.load(f)
+			return questions
+
+async def triviatest(ctx):
+	await ctx.send('Getting Question...')
+	answer = getquestion()
+	await ctx.send(answer)
+
 @bot.event
 async def on_message(message):
 	global antinsfw
@@ -266,6 +299,10 @@ async def on_message(message):
 		await message.delete()
 	else:
 		await bot.process_commands(message)
+		
+		
+		
+		
 					
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
