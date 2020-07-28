@@ -287,6 +287,7 @@ def getquestion():
 			questions = json.load(f)
 			return questions
 
+@bot.command
 async def triviatest(ctx):
 	await ctx.send('Getting Question...')
 	answer = getquestion()
