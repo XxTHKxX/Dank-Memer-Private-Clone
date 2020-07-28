@@ -111,6 +111,8 @@ async def nonsfw(ctx, option):
 async def init(ctx):
 	connectsql() #Connect to the database
 	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
+	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")
+	download_questions()
 	message = ''
 	for guild in bot.guilds: #Looping though all servers
 		for member in guild.members: #Looping though all members
@@ -121,8 +123,8 @@ async def init(ctx):
 				cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
 				message = message + '\n' + (f"Member {targetname} has been added to the database")
 	await ctx.send(message)
-				
-				 
+	
+	
 	conn.commit() #Commiting the changes to the database
 	conn.close() #Closing the database connection
 	
@@ -131,7 +133,9 @@ async def init(ctx):
 async def wipe(ctx):
 	connectsql() # Connect to database
 	cur.execute("DELETE FROM data") # Wipe all data from the table
+	cur.execute("DELETE FROM trivia")
 	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
+	cur.execute("DROP TABLE IF EXISTS trivia")
 	conn.commit() #Commit the change
 	conn.close() #Close the connection
 	await ctx.send("Table Wiped") #Report to user
@@ -147,25 +151,15 @@ async def rich(ctx):
 			if row == None:
 				break #If the data is not found, skip
 			currentdata = currentdata + "\n" + (f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
-						
+			
 	await ctx.send(currentdata)
 	conn.close() #Close connection
 	
-@bot.command()
-async def bal(ctx, target : discord.Member):
-	connectsql()
-	if target == None:
-		user = ctx.author.id
-	else:
-		user = target
-	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
-	data = cur.fetchone()
-	balance = data[2]
-	await ctx.send(f"Balance of {user} is: {balance}")
-	conn.close()
 	
 @bot.command()
-async def balbeta(ctx, target : discord.Member):
+async def bal(ctx, target : discord.Member = None):
+	if target == None:
+		target = ctx.author.id
 	connectsql()
 	embed=discord.Embed(color=0xffff00)
 	message = f"Balance of {target}"
@@ -263,43 +257,49 @@ async def forcedrop(ctx):
 					await gamechannel.send(f"Lootbox looted by {answer.author}!, unfortunately, there's a bomb inside and you died")
 			conn.commit()
 			conn.close()
-
-
+			
+			
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
 	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
 	r = requests.get(api_url)
+	connectsql()
 	api_result = r.json()
 	questions = api_result['results']
-	processed_questions = []
+	i = 0
 	for q in questions:
-		pq = {'category': unquote(q['category']),
-		      'difficulty': unquote(q['difficulty']),
-		      'question': unquote(q['question']),
-		      'correct': unquote(q['correct_answer']),
-		      'incorrect': [unquote(a) for a in q['incorrect_answers']]}
-		processed_questions.append(pq)
-		with open('questions.json', 'w') as f:
-			json.dump(questions, f, indent=2)	
-
+		i = i+1
+		category = str(unquote(q['category']))
+		difficulty = str(unquote(q['difficulty']))
+		question = str(unquote(q['question']))
+		correctans = str(unquote(q['correct_answer']))
+		badans = [unquote(a) for a in q['incorrect_answers']]
+		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong) VALUES ({id}, {category}, {difficulty}, {question}, {correctans}, {badans})")
+		conn.commit()
+		conn.close()
+		
 def getquestion():
-	with open('questions.json', 'r') as f:
-			i = random.randint(1,50)
-			questions = json.load(f)
-			q = questions[i]
-			qu = q['question']
-			all_answers = [q['correct']] + q['incorrect']
-			random.shuffle(all_answers)
-			
-			value = qu + all_answers
-			return value
-
+	connectsql()
+	questionid = random.randint(1,50)
+	cur.execute(f"SELECT * FROM trivia WHERE id = {questionid}")
+	data = cur.fetchone()
+	cat = data[1]
+	diff = data[2]
+	question = data[3]
+	correctans = data[4]
+	wrongans = data[5]
+	allans = correctans + wrongans
+	random.shuffle(allans)
+	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + allans
+	return response
+	
+		
 @bot.command()
 async def triviatest(ctx):
 	await ctx.send('Getting Question...')
 	answer = getquestion()
 	await ctx.send(answer)
-
+	
 @bot.event
 async def on_message(message):
 	global antinsfw
@@ -311,9 +311,7 @@ async def on_message(message):
 		
 		
 		
-					
+		
 token = os.environ.get('BOT_TOKEN')
 bot.run(token) #Getting the bot token and logging in with it
-
-
 
