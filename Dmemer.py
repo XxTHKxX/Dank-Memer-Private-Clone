@@ -284,8 +284,15 @@ def download_questions():
 
 def getquestion():
 	with open('questions.json', 'r') as f:
+			i = random.randint(1,50)
 			questions = json.load(f)
-			return questions
+			q = questions[i]
+			qu = q['question']
+			all_answers = [q['correct']] + q['incorrect']
+			random.shuffle(all_answers)
+			
+			value = qu + all_answers
+			return value
 
 @bot.command()
 async def triviatest(ctx):
