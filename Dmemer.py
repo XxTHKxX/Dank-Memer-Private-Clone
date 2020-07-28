@@ -119,7 +119,7 @@ async def init(ctx):
 				pass #Checking if a user is a bot, if True, skip this user
 			else:
 				targetname = repr(member.name + "#" + member.discriminator)
-				cur.execute(f"INSERT INTO data (id, username, amount) VALUES ({member.id}, {targetname}, 5000)") #Adding member to database
+				cur.execute(f"INSERT INTO data (id, username, amount) VALUES (%s, %s, %s)" ({member.id}, {targetname}, 5000)) #Adding member to database
 				message = message + '\n' + (f"Member {targetname} has been added to the database")
 	await ctx.send(message)
 	
