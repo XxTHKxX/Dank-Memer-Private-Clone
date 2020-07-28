@@ -131,8 +131,8 @@ async def init(ctx):
 @bot.command()
 async def wipe(ctx):
 	connectsql() # Connect to database
-	cur.execute("DELETE FROM IF EXIST data") # Wipe all data from the table
-	cur.execute("DELETE FROM IF EXIST trivia")
+	cur.execute("DELETE FROM data") # Wipe all data from the table
+	#cur.execute("DELETE FROM trivia")
 	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
 	cur.execute("DROP TABLE IF EXISTS trivia")
 	conn.commit() #Commit the change
