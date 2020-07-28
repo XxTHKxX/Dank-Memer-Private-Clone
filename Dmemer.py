@@ -4,7 +4,6 @@ import os
 import random
 import asyncio
 import requests
-import json
 from urllib.parse import unquote
 from itertools import cycle
 from discord.ext import commands, tasks
@@ -132,8 +131,8 @@ async def init(ctx):
 @bot.command()
 async def wipe(ctx):
 	connectsql() # Connect to database
-	cur.execute("DELETE FROM data") # Wipe all data from the table
-	cur.execute("DELETE FROM trivia")
+	cur.execute("DELETE FROM IF EXIST data") # Wipe all data from the table
+	cur.execute("DELETE FROM IF EXIST trivia")
 	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
 	cur.execute("DROP TABLE IF EXISTS trivia")
 	conn.commit() #Commit the change
@@ -159,7 +158,7 @@ async def rich(ctx):
 @bot.command()
 async def bal(ctx, target : discord.Member = None):
 	if target == None:
-		target = ctx.author.id
+		target = ctx.author
 	connectsql()
 	embed=discord.Embed(color=0xffff00)
 	message = f"Balance of {target}"
@@ -290,7 +289,7 @@ def getquestion():
 	wrongans = data[5]
 	allans = correctans + wrongans
 	random.shuffle(allans)
-	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + allans
+	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + "Question:" + question + "\n" + allans
 	return response
 	
 		
