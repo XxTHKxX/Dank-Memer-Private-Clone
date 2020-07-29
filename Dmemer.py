@@ -300,10 +300,14 @@ def getquestion():
 	diff = data[2]
 	question = data[3]
 	correctans = data[4]
-	wrongans = data[5]
-	allans = correctans + wrongans
+	wrongans1 = data[5]
+	wrongans2 = data[6]
+	wrongans3 = data[7]
+	allans = (correctans, wrongans1, wrongans2, wrongans3)
 	random.shuffle(allans)
-	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + "Question:" + question + "\n" + allans
+	
+	answers = (f"{allans[0]} \n {allans[1]} \n {allans[2]} \n {allans[3]}")
+	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + "Question:" + question + "\n" + answers
 	return response
 	
 		
