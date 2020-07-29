@@ -104,14 +104,6 @@ async def nonsfw(ctx, option):
 		antinsfw = False
 		await ctx.send('Okay, entering the dark side')
 		
-
-@bot.command()
-async def inittest(ctx):
-	connectsql()
-	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")
-	conn.commit()
-	conn.close()
-	await ctx.send("Table Created")
 						
 @commands.has_permissions(administrator=True)
 @bot.command()
@@ -158,7 +150,7 @@ async def rich(ctx):
 	currentdata = ''
 	for guild in bot.guilds: #looping though all servers
 		cur.execute(f"SELECT * FROM data ORDER BY amount DESC") #Search in the database about the user with that ID
-		rows = cur.fetchall() #Get the data on that user
+		rows = cur.fetchall() #Get the data
 		for row in rows:
 			if row == None:
 				break #If the data is not found, skip
@@ -270,11 +262,18 @@ async def forcedrop(ctx):
 			conn.commit()
 			conn.close()
 			
-			
+def wipetriviasql():
+	connectsql()
+	cur.execute("DELETE FROM trivia")
+	conn.commit()
+	conn.close()
+	
+					
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
 	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
 	r = requests.get(api_url)
+	wipetriviasql()
 	connectsql()
 	api_result = r.json()
 	questions = api_result['results']
@@ -285,7 +284,6 @@ def download_questions():
 		difficulty = str(unquote(q['difficulty']))
 		question = str(unquote(q['question']))
 		correctans = str(unquote(q['correct_answer']))
-		print(q['incorrect_answers'])
 		badans1 = str(unquote(q['incorrect_answers'][0]))
 		badans2 = str(unquote(q['incorrect_answers'][1]))
 		badans3 = str(unquote(q['incorrect_answers'][2]))
