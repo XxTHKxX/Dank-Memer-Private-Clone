@@ -285,6 +285,7 @@ def download_questions():
 		difficulty = str(unquote(q['difficulty']))
 		question = str(unquote(q['question']))
 		correctans = str(unquote(q['correct_answer']))
+		print(unquote(['incorrect_answers']))
 		badans1 = str(unquote(['incorrect_answers'][0]))
 		badans2 = str(unquote(['incorrect_answers'][1]))
 		badans3 = str(unquote(['incorrect_answers'][2]))
