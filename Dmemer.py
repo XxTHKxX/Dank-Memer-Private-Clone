@@ -310,7 +310,7 @@ def getquestion():
 	
 	answers = (f"A){allans[0]} \n B){allans[1]} \n C){allans[2]} \n D){allans[3]}")
 	
-	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n  " + answers.replace("'", "")
+	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n " + answers.replace("'", "")
 	
 	return response, correctans, diff
 	
@@ -328,14 +328,12 @@ async def triviatest(ctx):
 		amount = random.randint(1000,5000)
 	elif diff == 'hard':
 		amount = random.randint(4000,10000)
-	else:
-		amount = 500
-	string = 'test'
+
 	def check(m):
 		return str(m.content) == correct
 	await ctx.send(question)
 	try:
-		answer = await bot.wait_for('message', check=check, timeout = 30.0)
+		answer = await bot.wait_for('message', check=check, timeout = 10.0)
 	except asyncio.TimeoutError:
 		await gamechannel.send("Oh well, look like no one's smart enough")
 	else:
