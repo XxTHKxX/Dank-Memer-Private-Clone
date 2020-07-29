@@ -280,13 +280,13 @@ def download_questions():
 	id = 0
 	for q in questions:
 		id = id + 1
-		category = str(unquote(q['category']))
-		difficulty = str(unquote(q['difficulty']))
-		question = str(unquote(q['question']))
-		correctans = str(unquote(q['correct_answer']))
-		badans1 = str(unquote(q['incorrect_answers'][0]))
-		badans2 = str(unquote(q['incorrect_answers'][1]))
-		badans3 = str(unquote(q['incorrect_answers'][2]))
+		category = repr(unquote(q['category']))
+		difficulty = repr(unquote(q['difficulty']))
+		question = repr(unquote(q['question']))
+		correctans = repr(unquote(q['correct_answer']))
+		badans1 = repr(unquote(q['incorrect_answers'][0]))
+		badans2 = repr(unquote(q['incorrect_answers'][1]))
+		badans3 = repr(unquote(q['incorrect_answers'][2]))
 		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES ({id}, {category}, {difficulty}, {question}, {correctans}, {badans1}, {badans2}, {badans3})")
 		conn.commit()
 		conn.close()
