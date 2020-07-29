@@ -298,6 +298,7 @@ def getquestion():
 	data = cur.fetchone()
 	cat = data[1]
 	diff = data[2]
+	diff = diff.replace("'", "")
 	question = data[3]
 	correctans = data[4]
 	correctans = correctans.replace("'", "")
