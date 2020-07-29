@@ -273,10 +273,6 @@ def download_questions():
 	conn.commit()
 	conn.close()
 	
-	DATABASE_URL = os.environ['DATABASE_URL']
-	conn1 = psycopg2.connect(DATABASE_URL, sslmode='require')
-	cur1 = conn1.cursor()
-	
 	api_result = r.json()
 	questions = api_result['results']
 	id = 0
@@ -289,9 +285,10 @@ def download_questions():
 		badans1 = repr(unquote(q['incorrect_answers'][0]))
 		badans2 = repr(unquote(q['incorrect_answers'][1]))
 		badans3 = repr(unquote(q['incorrect_answers'][2]))
-		cur1.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (id, category, difficulty, question, correctans, badans1, badans2, badans3))
-		conn1.commit()
-		conn1.close()
+		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (id, category, difficulty, question, correctans, badans1, badans2, badans3))
+		
+	conn.commit()
+	conn.close()
 		
 def getquestion():
 	connectsql()
