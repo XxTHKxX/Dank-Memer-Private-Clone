@@ -275,7 +275,7 @@ def download_questions():
 	
 	DATABASE_URL = os.environ['DATABASE_URL']
 	conn1 = psycopg2.connect(DATABASE_URL, sslmode='require')
-	cur1 = conn.cursor()
+	cur1 = conn1.cursor()
 	
 	api_result = r.json()
 	questions = api_result['results']
