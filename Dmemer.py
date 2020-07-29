@@ -330,7 +330,7 @@ async def triviatest(ctx):
 		amount = 500
 	
 	def check(m):
-		return m.content == correct and m.channel == gamechannel
+		return m.content == correct.replace("'", "") and m.channel == gamechannel
 			
 	await ctx.send(question)
 	try:
