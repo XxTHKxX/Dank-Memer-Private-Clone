@@ -262,18 +262,17 @@ async def forcedrop(ctx):
 			conn.commit()
 			conn.close()
 			
-def wipetriviasql():
-	connectsql()
-	cur.execute("DELETE FROM trivia")
-	conn.commit()
-	conn.close()
-	
 					
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
 	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
 	r = requests.get(api_url)
-	wipetriviasql()
+	
+	connectsql()
+	cur.execute("DELETE FROM trivia")
+	conn.commit()
+	conn.close()
+	
 	connectsql()
 	api_result = r.json()
 	questions = api_result['results']
