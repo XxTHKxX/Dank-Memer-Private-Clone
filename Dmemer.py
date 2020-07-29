@@ -329,10 +329,13 @@ async def triviatest(ctx):
 		amount = random.randint(4000,10000)
 	else:
 		amount = 500
-	
+	string = 'test'
 	def check(m):
-		return str(m.content) == 'test' and m.channel == gamechannel
-			
+		return str(m.content) == string and m.channel == gamechannel
+			cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+					data = cur.fetchone()
+					currentbal = data[2]
+					newbal = currentbal + amount
 	await ctx.send(question)
 	try:
 		answer = await bot.wait_for('message', check=check, timeout = 30.0)
