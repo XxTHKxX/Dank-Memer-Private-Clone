@@ -300,6 +300,7 @@ def getquestion():
 	diff = data[2]
 	question = data[3]
 	correctans = data[4]
+	correctans = correctans.replace("'", "")
 	wrongans1 = data[5]
 	wrongans2 = data[6]
 	wrongans3 = data[7]
@@ -330,7 +331,7 @@ async def triviatest(ctx):
 		amount = 500
 	
 	def check(m):
-		return m.content == correct.replace("'", "") and m.channel == gamechannel
+		return m.content == correct and m.channel == gamechannel
 			
 	await ctx.send(question)
 	try:
