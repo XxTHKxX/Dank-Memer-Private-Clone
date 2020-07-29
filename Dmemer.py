@@ -351,6 +351,7 @@ async def triviatest(ctx):
 			currentbal = data[2]
 			newbal = currentbal + amount
 			cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+			await gamechannel.send(f"Smart guy, you got {amount}")
 			conn.commit()
 			conn.close()
 			
