@@ -108,7 +108,10 @@ async def nonsfw(ctx, option):
 @bot.command()
 async def inittest(ctx):
 	connectsql()
-	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")	await ctx.send("Table Created")
+	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")
+	conn.commit()
+	conn.close()
+	await ctx.send("Table Created")
 						
 @commands.has_permissions(administrator=True)
 @bot.command()
