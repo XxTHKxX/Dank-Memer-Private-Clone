@@ -273,6 +273,7 @@ def download_questions():
 	conn.commit()
 	conn.close()
 	
+	connectsql()
 	api_result = r.json()
 	questions = api_result['results']
 	id = 0
