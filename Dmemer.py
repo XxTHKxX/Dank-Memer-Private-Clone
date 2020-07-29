@@ -332,7 +332,7 @@ async def triviatest(ctx):
 		amount = 500
 	string = 'test'
 	def check(m):
-		return str(m.content) == string
+		return str(m.content) == correct
 	await ctx.send(question)
 	try:
 		answer = await bot.wait_for('message', check=check, timeout = 30.0)
