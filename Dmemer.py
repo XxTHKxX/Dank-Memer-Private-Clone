@@ -306,9 +306,9 @@ def getquestion():
 	allans = [correctans, wrongans1, wrongans2, wrongans3]
 	random.shuffle(allans)
 	
-	answers = (f"{allans[0]} \n {allans[1]} \n {allans[2]} \n {allans[3]}")
+	answers = (f"A){allans[0]} \n B){allans[1]} \n C){allans[2]} \n D){allans[3]}")
 	
-	response = "category:" + cat + "\n" + "Difficulty:" + diff + "\n" + "Question:" + question + "\n" + answers
+	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n" + answers.replace("'", "")
 	
 	return response
 	
