@@ -331,7 +331,7 @@ async def triviatest(ctx):
 		amount = 500
 	
 	def check(m):
-		return m.content == correct and m.channel == gamechannel
+		return m.content == 'test' and m.channel == gamechannel
 			
 	await ctx.send(question)
 	try:
