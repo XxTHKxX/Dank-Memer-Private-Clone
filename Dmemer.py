@@ -118,8 +118,13 @@ async def inittest(ctx):
 async def init(ctx):
 	connectsql() #Connect to the database
 	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
+	conn.commit()
+	conn.close()
+	connectsql()
 	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")
-	download_questions()
+	conn.commit()
+	conn.close()
+	connectsql()
 	message = ''
 	for guild in bot.guilds: #Looping though all servers
 		for member in guild.members: #Looping though all members
@@ -129,18 +134,18 @@ async def init(ctx):
 				targetname = repr(member.name + "#" + member.discriminator)
 				cur.execute(f"INSERT INTO data (id, username, amount) VALUES (%s, %s, %s)" ({member.id}, {targetname}, 5000)) #Adding member to database
 				message = message + '\n' + (f"Member {targetname} has been added to the database")
-	await ctx.send(message)
-	
-	
+	await ctx.send(message)	
 	conn.commit() #Commiting the changes to the database
 	conn.close() #Closing the database connection
+	download_questions()
+	await ctx.send('Questions added to database')
 	
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def wipe(ctx):
 	connectsql() # Connect to database
 	cur.execute("DELETE FROM data") # Wipe all data from the table
-	#cur.execute("DELETE FROM trivia")
+	cur.execute("DELETE FROM trivia")
 	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
 	cur.execute("DROP TABLE IF EXISTS trivia")
 	conn.commit() #Commit the change
