@@ -104,7 +104,12 @@ async def nonsfw(ctx, option):
 		antinsfw = False
 		await ctx.send('Okay, entering the dark side')
 		
-		
+
+@bot.command()
+async def inittest(ctx):
+	connectsql()
+	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")	await ctx.send("Table Created")
+						
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
