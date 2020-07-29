@@ -121,7 +121,7 @@ async def init(ctx):
 	conn.commit()
 	conn.close()
 	connectsql()
-	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong TEXT)")
+	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong1 TEXT, wrong2 TEXT, wrong3 TEXT)")
 	conn.commit()
 	conn.close()
 	connectsql()
@@ -285,8 +285,10 @@ def download_questions():
 		difficulty = str(unquote(q['difficulty']))
 		question = str(unquote(q['question']))
 		correctans = str(unquote(q['correct_answer']))
-		badans = [unquote(a) for a in q['incorrect_answers']]
-		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong) VALUES ({id}, {category}, {difficulty}, {question}, {correctans}, {badans})")
+		badans1 = str(unquote(['incorrect_answers'][0]))
+		badans2 = str(unquote(['incorrect_answers'][1]))
+		badans3 = str(unquote(['incorrect_answers'][2]))
+		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES ({id}, {category}, {difficulty}, {question}, {correctans}, {badans1}, {badans2}, {badans3})")
 		conn.commit()
 		conn.close()
 		
