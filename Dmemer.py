@@ -308,17 +308,53 @@ def getquestion():
 	
 	answers = (f"A){allans[0]} \n B){allans[1]} \n C){allans[2]} \n D){allans[3]}")
 	
-	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n" + answers.replace("'", "")
+	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n  " + answers.replace("'", "")
 	
-	return response
+	return response, correctans, diff
 	
 		
 @bot.command()
 async def triviatest(ctx):
+	gamechannel = bot.get_channel(724274805381267498)
+	death = random.randint(1,100)
 	await ctx.send('Getting Question...')
-	answer = getquestion()
-	await ctx.send(answer)
+	question, correct, diff = getquestion()
 	
+	if diff == 'easy':
+		amount = random.randint(0,2000)
+	elif diff == 'medium':
+		amount = random.randint(1000,5000)
+	elif diff == 'hard':
+		amount = random.randint(4000,10000)
+	else:
+		amount = 500
+	
+	def check(m):
+		return m.content == correct and m.channel == gamechannel
+			
+	await ctx.send(question)
+	try:
+		answer = await bot.wait_for('message', check=check, timeout = 30.0)
+	except asyncio.TimeoutError:
+		await gamechannel.send("Oh well, look like no one's smart enough")
+	else:
+		connectsql()
+		if death == 1:
+			newbal = 0
+			cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+			await gamechannel.send("Welp, you answered correctly, but some other person ran over you while you're going home so you died instead, suck to be you")
+			conn.commit()
+			conn.close()
+		else:
+			cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+			data = cur.fetchone()
+			currentbal = data[2]
+			newbal = currentbal + amount
+			cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+			conn.commit()
+			conn.close()
+			
+			
 @bot.event
 async def on_message(message):
 	global antinsfw
