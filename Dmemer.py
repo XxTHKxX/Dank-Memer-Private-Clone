@@ -287,7 +287,7 @@ def download_questions():
 		badans1 = repr(unquote(q['incorrect_answers'][0]))
 		badans2 = repr(unquote(q['incorrect_answers'][1]))
 		badans3 = repr(unquote(q['incorrect_answers'][2]))
-		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES ({id}, {category}, {difficulty}, {question}, {correctans}, {badans1}, {badans2}, {badans3})")
+		cur.execute(f"INSERT INTO trivia (id, category, difficulty, question, correct, wrong1, wrong2, wrong3) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", ({id}, {category}, {difficulty}, {question}, {correctans}, {badans1}, {badans2}, {badans3}))
 		conn.commit()
 		conn.close()
 		
