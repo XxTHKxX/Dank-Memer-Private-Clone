@@ -277,9 +277,9 @@ def download_questions():
 	connectsql()
 	api_result = r.json()
 	questions = api_result['results']
-	i = 0
+	id = 0
 	for q in questions:
-		i = i+1
+		id = id + 1
 		category = str(unquote(q['category']))
 		difficulty = str(unquote(q['difficulty']))
 		question = str(unquote(q['question']))
