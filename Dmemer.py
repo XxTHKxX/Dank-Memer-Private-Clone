@@ -333,7 +333,7 @@ async def drop():
 		
 @commands.has_permissions(administrator=True)
 @bot.command()
-async def dropnow():
+async def dropnow(ctx):
 	chance = random.randint(1,100)
 	if True:
 		gamechannel = bot.get_channel(724274805381267498)
