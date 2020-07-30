@@ -254,14 +254,15 @@ async def drop():
 			amount = random.randint(1000,5000)
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
-			
+		
+		global flagged
+		flagged = []
 		def check(m):
 			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter) and m.author.id not in flagged:
 				return True
 			else:
 				flagged.append(m.author.id)
 		await gamechannel.send(question)
-		flagged = []
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
 		except asyncio.TimeoutError:
@@ -317,14 +318,14 @@ async def dropnow(ctx):
 			amount = random.randint(1000,5000)
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
-			
+		global flagged
+		flagged = []
 		def check(m):
 			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
 				return True
 			else:
 				flagged.append(m.author.id)
 		await gamechannel.send(question)
-		flagged = []
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
 		except asyncio.TimeoutError:
