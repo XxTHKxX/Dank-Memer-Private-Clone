@@ -25,7 +25,7 @@ def connectsql():
 	cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
-			
+
 ownerid = [708645600165625872, 419742289188093952]
 
 @bot.event
@@ -56,7 +56,7 @@ async def nonsfw(ctx, option):
 		antinsfw = False
 		await ctx.send('Okay, entering the dark side')
 		
-						
+		
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
@@ -78,7 +78,7 @@ async def init(ctx):
 				targetname = repr(member.name + "#" + member.discriminator)
 				cur.execute(f"INSERT INTO data (id, username, amount) VALUES  ({member.id}, {targetname}, 5000)") #Adding member to database
 				message = message + '\n' + (f"Member {targetname} has been added to the database")
-	await ctx.send(message)	
+	await ctx.send(message)
 	conn.commit() #Commiting the changes to the database
 	conn.close() #Closing the database connection
 	download_questions()
@@ -143,7 +143,7 @@ async def rob(ctx, target : discord.Member):
 	if row == None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
 	attackerbal = row[2]    #Saving data of attacker
-	successmin = 40 #Minimum success number
+	successmin = 50 #Minimum success number
 	roll1 = random.randint(1,100) # Generate first number
 	if roll1 >= successmin: #Check if the attacker succeed
 		stolenpercent = random.randint(3, 35) #Randomizing the percentage stolen
@@ -167,8 +167,8 @@ async def rob(ctx, target : discord.Member):
 	conn.commit() #Commit data to database
 	conn.close() #Close connection
 	
-			
-					
+	
+	
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
 	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
@@ -196,7 +196,7 @@ def download_questions():
 		
 	conn.commit()
 	conn.close()
-		
+	
 def getquestion():
 	connectsql()
 	questionid = random.randint(1,50)
@@ -237,25 +237,26 @@ def getquestion():
 	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n " + answers.replace("'", "")
 	
 	return response, correctans, letter, diff
-
+	
 @tasks.loop(seconds=60)
 async def drop():
 	chance = random.randint(1,100)
 	if chance >= 99:
 		gamechannel = bot.get_channel(724274805381267498)
 		death = random.randint(1,100)
-		await gamechannel.send('Getting Question...')
+		await gamechannel.send("It's time for another trivia question!")
 		question, correct, letter, diff = getquestion()
-	
+		
+		global amount
 		if diff == 'easy':
 			amount = random.randint(0,2000)
 		elif diff == 'medium':
 			amount = random.randint(1000,5000)
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
-
+			
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter) and m.author.id not in flagged:
 				return True
 			else:
 				flagged.append(m.author.id)
@@ -282,6 +283,20 @@ async def drop():
 				await gamechannel.send(f"Smart guy, you got {amount}")
 				conn.commit()
 				conn.close()
+		finally:
+			if len(flagged) >=1:
+				connectsql()
+				punished = []
+				for victim in flagged:
+					cur.execute(f"SELECT * FROM data WHERE id = {victim}")
+					data = cur.fetchone()
+					bal = data[2]
+					newbal = bal - amount
+					punished.append(victim)
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
+				gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
+			else:
+				pass
 	else:
 		pass
 		
@@ -293,14 +308,14 @@ async def dropnow(ctx):
 		death = random.randint(1,100)
 		await gamechannel.send('Getting Question...')
 		question, correct, letter, diff = getquestion()
-	
+		
 		if diff == 'easy':
 			amount = random.randint(0,2000)
 		elif diff == 'medium':
 			amount = random.randint(1000,5000)
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
-
+			
 		def check(m):
 			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
 				return True
@@ -329,9 +344,21 @@ async def dropnow(ctx):
 				await gamechannel.send(f"Smart guy, you got {amount}")
 				conn.commit()
 				conn.close()
+		finally:
+			if len(flagged) >=1:
+				connectsql()
+				punished = []
+				for victim in flagged:
+					cur.execute(f"SELECT * FROM data WHERE id = {victim}")
+					data = cur.fetchone()
+					bal = data[2]
+					newbal = bal - amount
+					punished.append(victim)
+					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
+				gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
 	else:
-		pass			
-			
+		pass
+		
 @bot.event
 async def on_message(message):
 	global antinsfw
