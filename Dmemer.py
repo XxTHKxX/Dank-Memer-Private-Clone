@@ -293,7 +293,8 @@ async def drop():
 					data = cur.fetchone()
 					bal = data[2]
 					newbal = bal - round(amount / 4)
-					punished.append(victim)
+					user = bot.get_user_info(victim)
+					punished.append(user)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
 				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {round(amount/4)}, gg u suck")
 				conn.commit()
@@ -356,9 +357,10 @@ async def dropnow(ctx):
 					data = cur.fetchone()
 					bal = data[2]
 					newbal = bal - round(amount/4)
-					punished.append(victim)
+					user = bot.get_user_info(victim)
+					punished.append(user)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
-				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose ,{round(amount/4)} gg u suck")
+				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {round(amount/4)}, gg u suck")
 				conn.commit()
 				conn.close()
 	else:
