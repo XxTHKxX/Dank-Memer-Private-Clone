@@ -292,10 +292,10 @@ async def drop():
 					cur.execute(f"SELECT * FROM data WHERE id = {victim}")
 					data = cur.fetchone()
 					bal = data[2]
-					newbal = bal - amount
+					newbal = bal - round(amount / 4)
 					punished.append(victim)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
-				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
+				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {round(amount/4)}, gg u suck")
 				conn.commit()
 				conn.close()
 			else:
@@ -355,10 +355,10 @@ async def dropnow(ctx):
 					cur.execute(f"SELECT * FROM data WHERE id = {victim}")
 					data = cur.fetchone()
 					bal = data[2]
-					newbal = bal - amount
+					newbal = bal - round(amount/4)
 					punished.append(victim)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
-				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
+				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose ,{round(amount/4)} gg u suck")
 				conn.commit()
 				conn.close()
 	else:
