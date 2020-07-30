@@ -25,54 +25,6 @@ def connectsql():
 	cur = conn.cursor()
 # Acquiring database's URL, connecting and making a cursor to access the database
 
-@tasks.loop(seconds=60)
-async def drop():
-	gamechannel = bot.get_channel(724274805381267498)
-	chance = random.randint(1,200)
-	number = random.randint(1000,9999)
-	amount = random.randint(0,10000)
-	def check(m):
-		if m.content.isnumeric() == True:
-			return int(m.content) == number and m.channel == gamechannel
-		else:
-			pass
-	if chance >=199:
-		bomb = random.randint(0,100)
-		if bomb != 1:
-			connectsql()
-			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-			try:
-				answer = await bot.wait_for('message', check=check, timeout = 8.0)
-			except asyncio.TimeoutError:
-				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-			else:
-				if int(answer.content) == number:
-					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-					data = cur.fetchone()
-					currentbal = data[2]
-					newbal = currentbal + amount
-					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-					await gamechannel.send(f"Drop looted by {answer.author}! You got {amount}")
-			conn.commit()
-			conn.close()
-		else:
-			connectsql()
-			await gamechannel.send(f"Quick! A lootbox has been dropped! Type '{number}' to get it!")
-			try:
-				answer = await bot.wait_for('message', check=check, timeout = 8.0)
-			except asyncio.TimeoutError:
-				await gamechannel.send("Oh well, look like no one's gonna loot it, Imma donate it to charity")
-			else:
-				if int(answer.content) == number:
-					cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-					data = cur.fetchone()
-					newbal = 0
-					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-					await gamechannel.send(f"Lootbox looted by {answer.author}! Unfortunately, there was an activated bomb inside the lootbox. You explode in a spectacular show of flesh and blood. You also lost all your money.")
-			conn.commit()
-			conn.close()
-			
-			
 			
 ownerid = [708645600165625872, 419742289188093952]
 
@@ -308,52 +260,124 @@ def getquestion():
 	allans = [correctans, wrongans1, wrongans2, wrongans3]
 	random.shuffle(allans)
 	
-	answers = (f"A){allans[0]} \n B){allans[1]} \n C){allans[2]} \n D){allans[3]}")
+	ans1 = "A)" + allans[0]
+	ans2 = "B)" + allans[1]
+	ans3 = "C)" + allans[2]
+	ans4 = "D)" + allans[3]
 	
+	answers = (f"{ans1} \n {ans2} \n {ans3} \n {ans4}")
+	letternum = 0
+	for a in allans:
+		letternum = letternum + 1
+		if correctans in a:
+			break
+	if letternum == 1:
+		letter = "A"
+	elif letternum == 2:
+		letter = "B"
+	elif letternum == 3:
+		letter = "C"
+	elif letternum == 4:
+		letter = "D"
+		
 	response = "Category:" + cat.replace("'", "") + "\n" + "Difficulty:" + diff.replace("'", "") + "\n" + "Question:" + question.replace("'", "") + "\n " + answers.replace("'", "")
 	
-	return response, correctans, diff
-	
-		
-@bot.command()
-async def triviatest(ctx):
-	gamechannel = bot.get_channel(724274805381267498)
-	death = random.randint(1,100)
-	await ctx.send('Getting Question...')
-	question, correct, diff = getquestion()
-	
-	if diff == 'easy':
-		amount = random.randint(0,2000)
-	elif diff == 'medium':
-		amount = random.randint(1000,5000)
-	elif diff == 'hard':
-		amount = random.randint(4000,10000)
+	return response, correctans, letter, diff
 
-	def check(m):
-		return str(m.content) == correct
-	await ctx.send(question)
-	try:
-		answer = await bot.wait_for('message', check=check, timeout = 10.0)
-	except asyncio.TimeoutError:
-		await gamechannel.send("Oh well, look like no one's smart enough")
-	else:
-		connectsql()
-		if death == 1:
-			newbal = 0
-			cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-			await gamechannel.send("Welp, you answered correctly, but some other person ran over you while you're going home so you died instead, suck to be you")
-			conn.commit()
-			conn.close()
+@tasks.loop(seconds=60)
+async def drop():
+	chance = random.randint(1,100)
+	if chance >= 99:
+		gamechannel = bot.get_channel(724274805381267498)
+		death = random.randint(1,100)
+		await gamechannel.send('Getting Question...')
+		question, correct, letter, diff = getquestion()
+	
+		if diff == 'easy':
+			amount = random.randint(0,2000)
+		elif diff == 'medium':
+			amount = random.randint(1000,5000)
+		elif diff == 'hard':
+			amount = random.randint(4000,10000)
+
+		def check(m):
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
+				return True
+			else:
+				flagged.append(m.author.id)
+		await gamechannel.send(question)
+		flagged = []
+		try:
+			answer = await bot.wait_for('message', check=check, timeout = 10.0)
+		except asyncio.TimeoutError:
+			await gamechannel.send("Oh well, look like no one's smart enough")
 		else:
-			cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
-			data = cur.fetchone()
-			currentbal = data[2]
-			newbal = currentbal + amount
-			cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
-			await gamechannel.send(f"Smart guy, you got {amount}")
-			conn.commit()
-			conn.close()
-			
+			connectsql()
+			if death == 1:
+				newbal = 0
+				cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+				await gamechannel.send("Welp, you answered correctly, but some other person ran over you while you're going home so you died instead, suck to be you")
+				conn.commit()
+				conn.close()
+			else:
+				cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+				data = cur.fetchone()
+				currentbal = data[2]
+				newbal = currentbal + amount
+				cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+				await gamechannel.send(f"Smart guy, you got {amount}")
+				conn.commit()
+				conn.close()
+	else:
+		pass
+		
+@commands.has_permissions(administrator=True)
+@bot.command()
+async def dropnow():
+	chance = random.randint(1,100)
+	if True:
+		gamechannel = bot.get_channel(724274805381267498)
+		death = random.randint(1,100)
+		await gamechannel.send('Getting Question...')
+		question, correct, letter, diff = getquestion()
+	
+		if diff == 'easy':
+			amount = random.randint(0,2000)
+		elif diff == 'medium':
+			amount = random.randint(1000,5000)
+		elif diff == 'hard':
+			amount = random.randint(4000,10000)
+
+		def check(m):
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
+				return True
+			else:
+				flagged.append(m.author.id)
+		await gamechannel.send(question)
+		flagged = []
+		try:
+			answer = await bot.wait_for('message', check=check, timeout = 10.0)
+		except asyncio.TimeoutError:
+			await gamechannel.send("Oh well, look like no one's smart enough")
+		else:
+			connectsql()
+			if death == 1:
+				newbal = 0
+				cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+				await gamechannel.send("Welp, you answered correctly, but some other person ran over you while you're going home so you died instead, suck to be you")
+				conn.commit()
+				conn.close()
+			else:
+				cur.execute(f"SELECT * FROM data WHERE id = {answer.author.id}")
+				data = cur.fetchone()
+				currentbal = data[2]
+				newbal = currentbal + amount
+				cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {answer.author.id}")
+				await gamechannel.send(f"Smart guy, you got {amount}")
+				conn.commit()
+				conn.close()
+	else:
+		pass			
 			
 @bot.event
 async def on_message(message):
