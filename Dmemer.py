@@ -294,7 +294,7 @@ async def drop():
 					newbal = bal - amount
 					punished.append(victim)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
-				gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
+				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
 			else:
 				pass
 	else:
@@ -355,7 +355,7 @@ async def dropnow(ctx):
 					newbal = bal - amount
 					punished.append(victim)
 					cur.execute(f"UPDATE data SET amount = {newbal} WHERE id = {victim}")
-				gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
+				await gamechannel.send(f"Bad luck to: \n {punished}, you all lose {amount}, gg u suck")
 	else:
 		pass
 		
