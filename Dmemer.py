@@ -170,7 +170,7 @@ async def rob(ctx, target : discord.Member):
 @rob.error
 async def rob_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
-    	await ctx.send(f"You're robbing way too much from these noobs, you can rob them in {round(error.retry_after,2}s")
+    	await ctx.send(f"You're robbing way too much from these noobs, you can rob them in {round(error.retry_after,2)}s")
 	
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
