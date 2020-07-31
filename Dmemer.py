@@ -256,12 +256,12 @@ async def drop():
 			amount = random.randint(4000,10000)
 		
 		global flagged
-		flagged = []
+		flagged = {}
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter) and m.author.id not in flagged:
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and (m.author.id not in flagged and m.author.id != 710363488182206465):
 				return True
 			else:
-				flagged.append(m.author.id)
+				flagged.update(m.author.id)
 		await gamechannel.send(question)
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
@@ -320,12 +320,12 @@ async def dropnow(ctx):
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
 		global flagged
-		flagged = []
+		flagged = {}
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and (m.author.id not in flagged and m.author.id != 710363488182206465):
 				return True
 			else:
-				flagged.append(m.author.id)
+				flagged.update(m.author.id)
 		await gamechannel.send(question)
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
