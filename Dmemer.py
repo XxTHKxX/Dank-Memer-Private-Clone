@@ -323,10 +323,10 @@ async def dropnow(ctx):
 		global flagged
 		flagged = []
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and (m.author.id not in flagged and m.author.id != 710363488182206465):
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
 				return True
 			else:
-				if m.author.id not in flagged:
+				if m.author.id not in flagged and m.author.id != 710363488182206465:
 					flagged.append(m.author.id)
 		await gamechannel.send(question)
 		try:
