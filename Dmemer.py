@@ -126,9 +126,9 @@ async def bal(ctx, target : discord.Member = None):
 	embed.set_footer(text="Bot made by Xx_THK_xX")
 	await ctx.send(embed=embed)
 	conn.close()
-	
-	
+		
 @bot.command()
+@commands.cooldown(1, 10, commands.BucketType.guild)
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
 	attackerid = ctx.author.id #Get the ID of the attacker
@@ -167,7 +167,10 @@ async def rob(ctx, target : discord.Member):
 	conn.commit() #Commit data to database
 	conn.close() #Close connection
 	
-	
+@rob.error
+async def rob_command_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+    	await ctx.send(f"You're robbing way too much from these noobs, you can rob them in {error.retry_after}")
 	
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
@@ -375,9 +378,7 @@ async def on_message(message):
 		await message.delete()
 	else:
 		await bot.process_commands(message)
-		
-		
-		
+			
 		
 		
 token = os.environ.get('BOT_TOKEN')
