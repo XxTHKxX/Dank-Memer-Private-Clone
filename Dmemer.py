@@ -134,7 +134,7 @@ async def rob(ctx, target : discord.Member):
 	attackerid = ctx.author.id #Get the ID of the attacker
 	user = target #Get ID of the victim
 	if user.id == attackerid:
-		ctx.send("You cannot rob yourself you dumb fuck")
+		await ctx.send("You cannot rob yourself you dumb fuck")
 		return
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
 	row = cur.fetchone() #Get data of the victim
