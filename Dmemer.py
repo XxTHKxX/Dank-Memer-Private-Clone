@@ -128,7 +128,7 @@ async def bal(ctx, target : discord.Member = None):
 	conn.close()
 		
 @bot.command()
-@commands.cooldown(1, 10, commands.BucketType.guild)
+@commands.cooldown(1, 10, commands.BucketType.user)
 async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
 	attackerid = ctx.author.id #Get the ID of the attacker
