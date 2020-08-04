@@ -133,7 +133,7 @@ async def rob(ctx, target : discord.Member):
 	connectsql() #Connect to database
 	attackerid = ctx.author.id #Get the ID of the attacker
 	user = target #Get ID of the victim
-	if user == attackerid:
+	if user.id == attackerid:
 		ctx.send("You cannot rob yourself you dumb fuck")
 		return
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
