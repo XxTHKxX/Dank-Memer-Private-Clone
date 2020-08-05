@@ -62,6 +62,7 @@ async def nonsfw(ctx, option):
 async def init(ctx):
 	connectsql()
 	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)")
+	conn.commit()
 	conn.close()
 	connectsql()
 	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong1 TEXT, wrong2 TEXT, wrong3 TEXT)")
