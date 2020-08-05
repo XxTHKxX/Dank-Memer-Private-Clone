@@ -7,15 +7,18 @@ import requests
 from urllib.parse import unquote
 from itertools import cycle
 from discord.ext import commands, tasks
-# Importing libraries
 
 
 bot = commands.Bot(command_prefix=['n!', 'N!'], case_insensitive = True)
-#Status Change
+
+
 status = cycle(['Looking at the records', 'transferring money', 'Waiting for drama'])
+
+
 @tasks.loop(seconds=2)
 async def change_status():
 	await bot.change_presence(activity=discord.Game(next(status)))
+	
 	
 def connectsql():
 	DATABASE_URL = os.environ['DATABASE_URL']
@@ -23,10 +26,9 @@ def connectsql():
 	conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 	global cur
 	cur = conn.cursor()
-# Acquiring database's URL, connecting and making a cursor to access the database
-
-
+	
 ownerid = [708645600165625872, 419742289188093952]
+
 
 @bot.event
 async def on_ready():
@@ -35,16 +37,14 @@ async def on_ready():
 	drop.start()
 	global antinsfw
 	antinsfw = False
-	print('Ready.')
-# When bot is ready it'll start the status change routine and print the Ready message in the log
+	print('Bot Online')
 
 
 @bot.command()
 async def ping(ctx):
 	await ctx.send(f"Pong! {round(bot.latency * 1000)} ms")
-#No need to explain this one -.-
-
-
+	
+	
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def nonsfw(ctx, option):
@@ -60,9 +60,8 @@ async def nonsfw(ctx, option):
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def init(ctx):
-	connectsql() #Connect to the database
-	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)") #Start the database creation process
-	conn.commit()
+	connectsql()
+	cur.execute("CREATE TABLE data (id BIGINT, username TEXT, amount INTEGER)")
 	conn.close()
 	connectsql()
 	cur.execute("CREATE TABLE trivia (id BIGINT, category TEXT, difficulty TEXT, question TEXT, correct TEXT, wrong1 TEXT, wrong2 TEXT, wrong3 TEXT)")
@@ -70,46 +69,46 @@ async def init(ctx):
 	conn.close()
 	connectsql()
 	message = ''
-	for guild in bot.guilds: #Looping though all servers
-		for member in guild.members: #Looping though all members
-			if member.bot == True:
-				pass #Checking if a user is a bot, if True, skip this user
+	for guild in bot.guilds:
+		for member in guild.members:
+			if member.bot:
+				pass
 			else:
 				targetname = repr(member.name + "#" + member.discriminator)
-				cur.execute(f"INSERT INTO data (id, username, amount) VALUES  ({member.id}, {targetname}, 5000)") #Adding member to database
+				cur.execute(f"INSERT INTO data (id, username, amount) VALUES  ({member.id}, {targetname}, 5000)")
 				message = message + '\n' + (f"Member {targetname} has been added to the database")
 	await ctx.send(message)
-	conn.commit() #Commiting the changes to the database
-	conn.close() #Closing the database connection
+	conn.commit()
+	conn.close()
 	download_questions()
 	await ctx.send('Questions added to database')
 	
 @commands.has_permissions(administrator=True)
 @bot.command()
 async def wipe(ctx):
-	connectsql() # Connect to database
-	cur.execute("DELETE FROM data") # Wipe all data from the table
+	connectsql()
+	cur.execute("DELETE FROM data")
 	cur.execute("DELETE FROM trivia")
-	cur.execute("DROP TABLE IF EXISTS data") #Delete the table itself
+	cur.execute("DROP TABLE IF EXISTS data")
 	cur.execute("DROP TABLE IF EXISTS trivia")
-	conn.commit() #Commit the change
-	conn.close() #Close the connection
-	await ctx.send("Table Wiped") #Report to user
+	conn.commit()
+	conn.close()
+	await ctx.send("Table Wiped")
 	
 @bot.command()
 async def rich(ctx):
-	connectsql() #Connect to database
+	connectsql()
 	currentdata = ''
-	for guild in bot.guilds: #looping though all servers
-		cur.execute(f"SELECT * FROM data ORDER BY amount DESC") #Search in the database about the user with that ID
-		rows = cur.fetchall() #Get the data
+	for guild in bot.guilds:
+		cur.execute(f"SELECT * FROM data ORDER BY amount DESC")
+		rows = cur.fetchall()
 		for row in rows:
 			if row == None:
-				break #If the data is not found, skip
-			currentdata = currentdata + "\n" + (f"Name: {row[1]}\nBalance: {row[2]}") #Reporting data
+				break
+			currentdata = currentdata + "\n" + (f"Name: {row[1]}\nBalance: {row[2]}")
 			
 	await ctx.send(currentdata)
-	conn.close() #Close connection
+	conn.close()
 	
 	
 @bot.command()
@@ -126,55 +125,52 @@ async def bal(ctx, target : discord.Member = None):
 	embed.set_footer(text="Bot made by Xx_THK_xX")
 	await ctx.send(embed=embed)
 	conn.close()
-		
+	
 @bot.command()
 @commands.cooldown(1, 10, commands.BucketType.user)
 async def rob(ctx, target : discord.Member):
-	connectsql() #Connect to database
-	attackerid = ctx.author.id #Get the ID of the attacker
-	user = target #Get ID of the victim
+	connectsql()
+	attackerid = ctx.author.id
+	user = target
 	if user.id == attackerid:
 		await ctx.send("You cannot rob yourself you dumb fuck")
 		return
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
-	row = cur.fetchone() #Get data of the victim
+	row = cur.fetchone()
 	if row == None:
-		await ctx.send("Unable to find target") #Report if the user is not found
-	targetbal = row[2] #Saving the balance data of the victim
-	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}") #Getting the data of the attacker
-	row = cur.fetchone() #Get data of attacker
+		await ctx.send("Unable to find target")
+	targetbal = row[2]
+	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}")
+	row = cur.fetchone()
 	if row == None:
-		await ctx.send("Unable to find your profile, are you sure you're enrolled?") #Report if user not found
-	attackerbal = row[2]    #Saving data of attacker
-	successmin = 50 #Minimum success number
-	roll1 = random.randint(1,100) # Generate first number
-	if roll1 >= successmin: #Check if the attacker succeed
-		stolenpercent = random.randint(3, 35) #Randomizing the percentage stolen
-		stolen = round(targetbal * (stolenpercent / 100)) #Calculating the amount stolen and rounding it
+		await ctx.send("Unable to find your profile, are you sure you're enrolled?")
+	attackerbal = row[2]
+	successmin = 50
+	roll1 = random.randint(1,100)
+	if roll1 >= successmin:
+		stolenpercent = random.randint(3, 35)
+		stolen = round(targetbal * (stolenpercent / 100))
 		remain = targetbal - stolen
 		attackernewbal = attackerbal + stolen
-		# Math Time
 		cur.execute(f"UPDATE data SET amount = {remain} WHERE id = {user.id}")
 		cur.execute(f"UPDATE data SET amount = {attackernewbal} WHERE id = {attackerid}")
-		#Updating the datas in the database
 		await ctx.send(f"Successful Steal! You've swooped {stolen}, or {stolenpercent}% from {user}")
-		#report to user
 	else:
-		roll2 = random.randint(1,100) #Randomizing number 2
+		roll2 = random.randint(1,100)
 		death = 10
-		if roll2 <= death: #Check if that user is really gonna die
-			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}") #Delete their money
-			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")   #INSULT
+		if roll2 <= death:
+			cur.execute(f"UPDATE data SET amount = 0 WHERE id = {attackerid}")
+			await ctx.send("Oh fuck, you tripped over a banana and hit your head in a pile of shit, and now you're dead")
 		else:
-			await ctx.send("You Failed the rob, noooob")     #Report if they failed
-	conn.commit() #Commit data to database
-	conn.close() #Close connection
+			await ctx.send("You Failed the rob, noooob")
+	conn.commit()
+	conn.close()
 	
 @rob.error
 async def rob_command_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-    	await ctx.send(f"You're robbing way too much from these noobs, you can rob them in {round(error.retry_after,2)}s")
-	
+	if isinstance(error, commands.CommandOnCooldown):
+		await ctx.send(f"You're robbing way too much from these noobs, you can rob them in {round(error.retry_after,2)}s")
+		
 def download_questions():
 	print('Downloading questions from Open Trivia DB...')
 	api_url = 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986'
@@ -260,7 +256,7 @@ async def drop():
 			amount = random.randint(1000,5000)
 		elif diff == 'hard':
 			amount = random.randint(4000,10000)
-		
+			
 		global flagged
 		flagged = []
 		def check(m):
@@ -334,6 +330,7 @@ async def dropnow(ctx):
 			else:
 				if m.author.id not in flagged and m.author.id != 710363488182206465:
 					flagged.append(m.author.id)
+					
 		await gamechannel.send(question)
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
@@ -374,16 +371,16 @@ async def dropnow(ctx):
 	else:
 		pass
 		
+		
 @bot.event
 async def on_message(message):
 	global antinsfw
-	if message.author.id == 285480424904327179 and antinsfw == True:
+	if message.author.id == 285480424904327179 and antinsfw:
 		await message.delete()
 	else:
 		await bot.process_commands(message)
-			
 		
 		
 token = os.environ.get('BOT_TOKEN')
-bot.run(token) #Getting the bot token and logging in with it
+bot.run(token)
 
