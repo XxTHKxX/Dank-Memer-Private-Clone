@@ -87,8 +87,6 @@ async def init(ctx):
 @bot.command()
 async def wipe(ctx):
 	connectsql()
-	cur.execute("DELETE FROM data")
-	cur.execute("DELETE FROM trivia")
 	cur.execute("DROP TABLE IF EXISTS data")
 	cur.execute("DROP TABLE IF EXISTS trivia")
 	conn.commit()
