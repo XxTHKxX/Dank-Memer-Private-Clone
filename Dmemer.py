@@ -259,7 +259,7 @@ async def drop():
 		global flagged
 		flagged = []
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and (m.author.id not in flagged and m.author.id != 710363488182206465):
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter) and (m.author.id not in flagged and m.author.id != 710363488182206465):
 				return True
 			else:
 				if m.author.id not in flagged:
@@ -268,7 +268,7 @@ async def drop():
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
 		except asyncio.TimeoutError:
-			await gamechannel.send("Oh well, look like no one's smart enough")
+			await gamechannel.send(f"Oh well, look like no one's smart enough, the answer is actually {correct}")
 		else:
 			connectsql()
 			if death == 1:
@@ -324,7 +324,7 @@ async def dropnow(ctx):
 		global flagged
 		flagged = []
 		def check(m):
-			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter or str(m.content) == "test") and m.author.id not in flagged:
+			if (str(m.content).upper() == str(correct).upper() or str(m.content).upper() == letter) and m.author.id not in flagged:
 				return True
 			else:
 				if m.author.id not in flagged and m.author.id != 710363488182206465:
@@ -334,7 +334,7 @@ async def dropnow(ctx):
 		try:
 			answer = await bot.wait_for('message', check=check, timeout = 10.0)
 		except asyncio.TimeoutError:
-			await gamechannel.send("Oh well, look like no one's smart enough")
+			await gamechannel.send(f"Oh well, look like no one's smart enough, the answer is actually {correct}")
 		else:
 			connectsql()
 			if death == 1:
