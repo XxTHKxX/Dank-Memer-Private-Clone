@@ -14,5 +14,4 @@ Werkzeug
 yarl
 Jinja2
 click
-flask
 requests
