@@ -102,7 +102,7 @@ async def rich(ctx):
 		cur.execute(f"SELECT * FROM data ORDER BY amount DESC")
 		rows = cur.fetchall()
 		for row in rows:
-			if row == None:
+			if row is None:
 				break
 			currentdata = currentdata + "\n" + (f"Name: {row[1]}\nBalance: {row[2]}")
 			
@@ -112,7 +112,7 @@ async def rich(ctx):
 	
 @bot.command()
 async def bal(ctx, target : discord.Member = None):
-	if target == None:
+	if target is None:
 		target = ctx.author
 	connectsql()
 	embed=discord.Embed(color=0xffff00)
@@ -136,12 +136,12 @@ async def rob(ctx, target : discord.Member):
 		return
 	cur.execute(f"SELECT * FROM data WHERE id = {user.id}")
 	row = cur.fetchone()
-	if row == None:
+	if row is None:
 		await ctx.send("Unable to find target")
 	targetbal = row[2]
 	cur.execute(f"SELECT * FROM data WHERE id = {attackerid}")
 	row = cur.fetchone()
-	if row == None:
+	if row is None:
 		await ctx.send("Unable to find your profile, are you sure you're enrolled?")
 	attackerbal = row[2]
 	successmin = 50
